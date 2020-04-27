@@ -44,28 +44,40 @@ class MpolynomDocument(Document):
 # #django_file = File(picture)
 #     django_file = base64.b64encode(picture.read())
 
-    poli = Mpolynom(
-    mpolynomyal= '2x + 3', 
-    structure_name = 'poliroli',
-    #poli.structure_picture.save('poliomina.png', django_file, save=True)
-    keywords = 'polinom, rolinom',
-    comments = 'zeloo lep',
-    references = 'ni, ni',
-    links = 'naštimaj settingse da je lahko polje prazno',
-    author = 'Mate Matik',
-    publication_date = '2020-04-23'
-    )
-    poli.save()
+    # poli = Mpolynom(
+    # mpolynomyal= '2x + 3', 
+    # structure_name = 'poliroli',
+    # #poli.structure_picture.save('poliomina.png', django_file, save=True)
+    # keywords = 'polinom, rolinom',
+    # comments = 'zeloo lep',
+    # references = 'ni, ni',
+    # links = 'naštimaj settingse da je lahko polje prazno',
+    # author = 'Mate Matik',
+    # publication_date = '2020-04-23'
+    # )
+    # poli.save()
 
-    Mpoli = Mpolynom(
-    mpolynomyal= '5x^2 + 3', 
-    structure_name = 'Mpoliroli',
-    #poli.structure_picture.save('poliomina.png', django_file, save=True)
-    keywords = 'polinom, struktura, kemijski graf',
-    comments = 'neki pa je',
-    references = 'čakamo',
-    links = 'link',
-    author = 'Mate Fik in P. Olde',
-    publication_date = '2020-03-23'
-    )
-    Mpoli.save()
+    # Mpoli = Mpolynom(
+    # mpolynomyal= '5x^2 + 3', 
+    # structure_name = 'Mpoliroli',
+    # #poli.structure_picture.save('poliomina.png', django_file, save=True)
+    # keywords = 'polinom, struktura, kemijski graf',
+    # comments = 'neki pa je',
+    # references = 'čakamo',
+    # links = 'link',
+    # author = 'Mate Fik in P. Olde',
+    # publication_date = '2020-03-23'
+    # )
+    # Mpoli.save()
+
+    # M1poli = Mpolynom(
+    # mpolynomyal= '5x^2 + 45x + 3', 
+    # structure_name = 'M1poliroli, rolo polo',
+    # #poli.structure_picture.save('poliomina.png', django_file, save=True)
+    # keywords = 'polinom, struktura, kemijski graf in še kaj',
+    # comments = 'neki pa je ane',
+    # references = 'čakamo na boljše čase',
+    # links = 'link',
+    # author = 'Fik in P. Olde'
+    # )
+    # M1poli.save()
