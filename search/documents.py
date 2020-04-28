@@ -81,3 +81,15 @@ class MpolynomDocument(Document):
     # author = 'Fik in P. Olde'
     # )
     # M1poli.save()
+
+    # p= Mpolynom(
+    # mpolynomyal= '12x^2 + 45x^2 - 2x + 3', 
+    # structure_name = 'poseben graf, rolo polo',
+    # #poli.structure_picture.save('poliomina.png', django_file, save=True)
+    # keywords = 'polinom, struktura',
+    # comments = 'ni komentarjev',
+    # references = 'poglej za ovinek',
+    # links = 'link, link1',
+    # author = 'Tomo the boss'
+    # )
+    # p.save()
