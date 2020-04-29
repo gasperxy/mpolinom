@@ -5,7 +5,7 @@ from django.utils import timezone
 # Create your models here. # preimenuj polynom
 class Mpolynom(models.Model):
     mpolynomyal = models.CharField("M-polynomial", max_length=1000) ### popravi, zaradi presledkov ne dela
-    structure_name = models.CharField(max_length=200, unique=True)
+    structure_name = models.CharField(max_length=200, unique=True) # keywords - glede na to da unique?? dopuscamo vec ali ne
     #structure_picture = models.ImageField()
     keywords = models.CharField(max_length=200) #
     comments = models.TextField(blank=True)
@@ -19,3 +19,6 @@ class Mpolynom(models.Model):
     def published_recently(self): 
         """true if published in last seven days"""
         return self.publication_date >= timezone.now().date() - datetime.timedelta(days=7)
+    # change name displayed on django admin site
+    class Meta:
+        verbose_name = "M-polynomial"
