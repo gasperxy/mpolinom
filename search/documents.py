@@ -11,6 +11,18 @@ connections.create_connection(hosts=['localhost'], timeout=20)
 # create elasticsearch index
 @registry.register_document
 class MpolynomDocument(Document):
+    mpolynomyal = fields.TextField(analyzer='whitespace')
+    def prepare_mpolynomyal(self, instance):
+        b = ""
+        for elt in instance:
+            if elt == "-" or elt == "+":
+                b = b + " " + elt
+            elif elt == " ":
+                b = b
+            else:
+                b = b + elt
+        return b
+        
     class Index:
         # Name of the Elasticsearch index
         name = 'mpolynomials_index'
@@ -23,7 +35,7 @@ class MpolynomDocument(Document):
 
         # The fields of the model you want to be indexed in Elasticsearch
         fields = [
-            'mpolynomyal',
+            #'mpolynomyal',
             'structure_name',
             #'structure_picture',
             'keywords',
@@ -46,7 +58,7 @@ class MpolynomDocument(Document):
 
 # poli = Mpolynom(
 # mpolynomyal= '2x + 3', 
-# structure_name = 'poliroli',
+# structure_name = 'novovv',
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
 # keywords = 'polinom, rolinom',
 # comments = 'zeloo lep',
@@ -93,3 +105,15 @@ class MpolynomDocument(Document):
 # author = 'Tomo the boss'
 # )
 # p.save()
+
+# sss= Mpolynom(
+# mpolynomyal= '12 x^3', 
+# structure_name = 'ssturas',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tomo the boss'
+# )
+# sss.save()

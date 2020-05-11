@@ -12,7 +12,8 @@ from django.http import HttpResponse
 
 def index(request): #search all fields
     q = request.GET.get('q')
-    if q:
+    if q: #popravi da bo iskalnik prilagodil polinom - kako določiti kakšen input je
+        # pazi splosne polinome
         results =  MpolynomDocument.search().query("multi_match", query = q, fields = ['mpolynomyal^3',
         'structure_name^3','keywords^2','comments','references','links','author^2'],fuzziness = 0) 
     else:

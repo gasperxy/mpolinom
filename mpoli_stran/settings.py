@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'search.apps.SearchConfig', #search
-    'django_elasticsearch_dsl'
+    'django_elasticsearch_dsl',
+    'elasticsearch_dsl'
 ]
 
 ELASTICSEARCH_DSL = {
