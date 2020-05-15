@@ -1,11 +1,9 @@
 from django.shortcuts import render
 from search.documents import MpolynomDocument
-from elasticsearch import Elasticsearch
-from elasticsearch_dsl import Search, Q
+# from elasticsearch import Elasticsearch
+# from elasticsearch_dsl import Search, Q
 
 
-client = Elasticsearch()
-s = Search(using=client)
 
 # Create your views here.
 from django.http import HttpResponse
@@ -20,20 +18,25 @@ def index(request): #search all fields
         for i in range(2,10):
             sign_list.append("^"+ str(i))
         for sign in sign_list:
+            # contains mpoly sign
             if wq.find(sign) != -1:
+            # rewrite in same form as elasticsearch storage
                 b = ""
                 for elt in wq:
                     if elt == "-" or elt == "+":
+                        b = b + " " + elt
+                    elif elt == "x" or elt == "y":
                         b = b + " " + elt
                     else:
                         b = b + elt
                 results =  MpolynomDocument.search().query("multi_match", query = b, fields = ['mpolynomyal^3',
                 'structure_name^3','keywords^2','comments','references','links','author^2'],fuzziness = 0)
-                results = str(results)
-                if results == None:
-                    results = "None"
-                    #results =  MpolynomDocument.search().query("multi_match", query = q, fields = ['mpolynomyal^3',
-                    #'structure_name^3','keywords^2','comments','references','links','author^2'],fuzziness = 0) 
+                response = results.execute()
+                number_results = response.hits.total.value
+                if number_results == 0:
+                    #results = str("ni ni")
+                    results =  MpolynomDocument.search().query("multi_match", query = q, fields = ['mpolynomyal^3',
+                    'structure_name^3','keywords^2','comments','references','links','author^2'],fuzziness = 0) 
                 break
         else:
             results =  MpolynomDocument.search().query("multi_match", query = q, fields = ['mpolynomyal^3',

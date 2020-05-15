@@ -16,6 +16,8 @@ class MpolynomDocument(Document):
         b = ""
         for elt in instance:
             if elt == "-" or elt == "+":
+                b = b + " " + elt + " "
+            elif elt == "x" or elt == "y":
                 b = b + " " + elt
             elif elt == " ":
                 b = b

@@ -1,15 +1,11 @@
 <form method="GET">
     <input type="text" name="q" placeholder="your search ...">
 </form>>
-{%if results == None%}
-{{"nicnebo"}}
-{%else%}
+
 {% for item in results %}
-{{item}}
 {{item.id}}
 {{item.mpolynomyal}}
 {{item.structure_name}}
 
 <br>
 {% endfor %}
-{%endif%}
