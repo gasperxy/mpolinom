@@ -2,21 +2,6 @@ import datetime
 from django.db import models
 from django.utils import timezone
 
-# class Iterator:
-#     ''' Iterator class '''
-#     def __init__(self, mpolynom):
-#        # Team object reference
-#        self._mpolynom = mpolynom
-#        # keep track of current index
-#        self._index = 0
-       
-#     def __next__(self):
-#         ''''Returns the next value from team object's lists '''
-#         if self._index <= (len(self._mpolynom._mpolynomial)):
-#             result = self._mpolynom._mpolynomial[self._index]
-#             self._index = self.__index + 1
-#             return result
-#         raise StopIteration
 
 # Create your models here. # preimenuj polynom
 class Mpolynom(models.Model):
