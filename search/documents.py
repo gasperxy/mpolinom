@@ -11,7 +11,9 @@ connections.create_connection(hosts=['localhost'], timeout=20)
 # create elasticsearch index
 @registry.register_document
 class MpolynomDocument(Document):
-    mpolynomyal = fields.TextField(analyzer='whitespace')
+    mpolynomyal = fields.TextField(fields={
+            'length': fields.IntegerField(type='token_count',analyzer='whitespace')
+        })
     def prepare_mpolynomyal(self, instance):
         b = ""
         for elt in instance:
@@ -23,6 +25,10 @@ class MpolynomDocument(Document):
                 b = b
             else:
                 b = b + elt
+        if b[0] == " ":
+            b = b[1:len(b)]
+        if b[len(b)-1] == " ":
+            b == b[0:len(b) - 1]
         return b
         
     class Index:
@@ -109,8 +115,8 @@ class MpolynomDocument(Document):
 # p.save()
 
 # sss= Mpolynom(
-# mpolynomyal= '12 x^3', 
-# structure_name = 'ssturas',
+# mpolynomyal= '-x^2', 
+# structure_name = 'ssssturasss',
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
 # keywords = 'polinom, struktura',
 # comments = 'ni komentarjev',
