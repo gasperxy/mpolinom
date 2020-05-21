@@ -8,6 +8,7 @@ class Mpolynom(models.Model):
     mpolynomyal = models.CharField("M-polynomial", max_length=1000) ### popravi, zaradi presledkov ne dela
     structure_name = models.CharField(max_length=200, unique=True) # keywords - glede na to da unique?? dopuscamo vec ali ne
     #structure_picture = models.ImageField()
+    #nb_tokens = models.PositiveSmallIntegerField()
     keywords = models.CharField(max_length=200) #
     comments = models.TextField(blank=True)
     references = models.TextField(blank=True)

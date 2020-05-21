@@ -1,19 +1,43 @@
-from django_elasticsearch_dsl import Document, fields
+
 from django_elasticsearch_dsl.registries import registry
 from .models import Mpolynom
 
 from django.core.files import File
 import datetime
 
-from elasticsearch_dsl import connections
+from elasticsearch_dsl import connections, TokenCount, Object, Text, Document, analyzer, Date
+#from elasticsearch_dsl import Document
+
 
 connections.create_connection(hosts=['localhost'], timeout=20)
+
+ 
 # create elasticsearch index
-@registry.register_document
+#@registry.register_document
 class MpolynomDocument(Document):
-    mpolynomyal = fields.TextField(fields={
-            'length': fields.IntegerField(type='token_count',analyzer='whitespace')
-        })
+    mpolynomyal = Text(
+        fields={'nb_tokens': TokenCount(analyzer=analyzer('whitespace'))}
+    )
+    structure_name = Text()
+            #'structure_picture',
+    keywords = Text()
+    comments = Text()
+    references = Text()
+    links = Text()
+    author = Text()
+    publication_date = Date()
+    
+    # mpolynomyal = fields.ObjectField(properties={
+    #     "mpolynomyal" : fields.TextField(fields = {
+    #         'nb_tokens': TokenCount(analyzer='whitespace')})
+    
+    #dsl.Object(properties={
+    #    'name': seeker.RawString,
+    #    'age': dsl.Integer(),
+    #})
+    #fields.TextField(fields={
+    #        'length': fields.IntegerField(type='token_count',analyzer='whitespace')
+    #    })
     def prepare_mpolynomyal(self, instance):
         b = ""
         for elt in instance:
@@ -38,12 +62,33 @@ class MpolynomDocument(Document):
         settings = {'number_of_shards': 1,
                     'number_of_replicas': 0}
 
+        # mappings = {
+        #      "properties": {
+        #         "mpolynomyal": { 
+        #             "type": "text",
+        #             "fields": {
+        #             "length": { 
+        #                 "type":     "token_count",
+        #                 "analyzer": "whitespace"
+        #             }
+        #             }
+        #         },
+        #         "keywords" : {"type" : "text"},
+        #         "comments" : {"type" : "text"},
+        #         "references" : {"type" : "text"},
+        #         "links" : {"type" : "text"},
+        #         "author" : {"type" : "text"},
+        #         "publication_date" : {"type" : "date"}
+        #         }
+        #     }
+
+
     class Django:
         model = Mpolynom # The model associated with this Document
 
         # The fields of the model you want to be indexed in Elasticsearch
         fields = [
-            #'mpolynomyal',
+           # 'mpolynomyal',
             'structure_name',
             #'structure_picture',
             'keywords',
@@ -53,6 +98,8 @@ class MpolynomDocument(Document):
             'author',
             'publication_date'
         ]
+
+MpolynomDocument.init()
 
 # create an object
 # import os
