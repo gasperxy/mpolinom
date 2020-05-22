@@ -20,23 +20,17 @@ def index(request): #search all fields
         for sign in sign_list:
             # contains mpoly sign
             if wq.find(sign) != -1:
-            # rewrite in same form as processed for elasticsearch storage
+            # rewrite in same form as elasticsearch storage
                 b = ""
                 for elt in wq:
                     if elt == "-" or elt == "+":
-                        b = b + " " + elt + " "
+                        b = b + " " + elt
                     elif elt == "x" or elt == "y":
                         b = b + " " + elt
-                    elif elt == " ":
-                        b = b
                     else:
                         b = b + elt
-                if b[0] == " ":
-                    b = b[1:len(b)]
-                if b[len(b)-1] == " ":
-                    b == b[0:len(b) - 1]
                 results =  MpolynomDocument.search().query("multi_match", query = b, fields = ['mpolynomyal^3',
-                'structure_name^3','keywords^2','comments','references','links','author^2'],fuzziness = "AUTO")
+                'structure_name^3','keywords^2','comments','references','links','author^2'],fuzziness = 0)
                 response = results.execute()
                 number_results = response.hits.total.value
                 if number_results == 0:
