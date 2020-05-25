@@ -14,6 +14,26 @@ class Mpolynom(models.Model):
     links = models.TextField(blank=True)
     author = models.CharField(max_length=100)
     publication_date = models.DateField(auto_now=True) #spremeni primere
+   # class Foo(models.Model):
+    nb_tokens = models.PositiveSmallIntegerField(default=0)
+    def save(self, *args, **kwargs):
+        b = ""
+        for elt in self.mpolynomyal:
+            if elt == "-" or elt == "+":
+                b = b + " " + elt + " "
+            elif elt == "x" or elt == "y":
+                b = b + " " + elt
+            elif elt == " ":
+                b = b
+            else:
+                b = b + elt
+        if b[0] == " ":
+            b = b[1:len(b)]
+        if b[len(b)-1] == " ":
+            b == b[0:len(b) - 1]
+        split = b.split(" ")
+        self.nb_tokens = len(split)
+        super(Mpolynom, self).save(*args, **kwargs) # Call the "real" save() method.
     # omogoci iteracijo
     def __iter__(self):
        ''' Returns the Iterator object '''

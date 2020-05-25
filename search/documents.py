@@ -11,11 +11,11 @@ connections.create_connection(hosts=['localhost'], timeout=20)
 # create elasticsearch index
 @registry.register_document
 class MpolynomDocument(Document):
-    #mpolynomyal = fields.TextField(analyzer='whitespace')
-    mpolynommyal = fields.ObjectField(properties={
-        'mpolynomial': fields.TextField(),
-        'token_count': fields.IntegerField(),
-    })
+    mpolynomyal = fields.TextField(analyzer='whitespace')
+    # mpolynommyal = fields.ObjectField(properties={
+    #     'mpolynomial': fields.TextField(),
+    #     'token_count': fields.IntegerField(),
+    # })
     def prepare_mpolynomyal(self, instance):
         b = ""
         for elt in instance:
@@ -27,9 +27,12 @@ class MpolynomDocument(Document):
                 b = b
             else:
                 b = b + elt
-            split = b.split(" ")
-            nb_tokens = len(split)
-        return b, nb_tokens
+        if b[0] == " ":
+            b = b[1:len(b)]
+        if b[len(b)-1] == " ":
+            b == b[0:len(b) - 1]
+    #nb_tokens = len(split)
+        return b#, nb_tokens
         
     class Index:
         # Name of the Elasticsearch index
@@ -51,7 +54,8 @@ class MpolynomDocument(Document):
             'references',
             'links',
             'author',
-            'publication_date'
+            'publication_date',
+            'nb_tokens'
         ]
 
 # create an object
@@ -65,34 +69,32 @@ class MpolynomDocument(Document):
 #     django_file = base64.b64encode(picture.read())
 
 # poli = Mpolynom(
-# mpolynomyal= '2x + 3', 
-# structure_name = 'novovv',
+# mpolynomyal= ' - x^2', 
+# structure_name = 'nnoovoov',
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
 # keywords = 'polinom, rolinom',
 # comments = 'zeloo lep',
 # references = 'ni, ni',
 # links = 'naštimaj settingse da je lahko polje prazno',
 # author = 'Mate Matik',
-# publication_date = '2020-04-23'
 # )
 # poli.save()
 
 # Mpoli = Mpolynom(
-# mpolynomyal= '5x^2 + 3', 
-# structure_name = 'Mpoliroli',
+# mpolynomyal= '12 x^3', 
+# structure_name = 'Mpolirolii',
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
 # keywords = 'polinom, struktura, kemijski graf',
 # comments = 'neki pa je',
 # references = 'čakamo',
 # links = 'link',
 # author = 'Mate Fik in P. Olde',
-# publication_date = '2020-03-23'
 # )
 # Mpoli.save()
 
 # M1poli = Mpolynom(
-# mpolynomyal= '5x^2 + 45x + 3', 
-# structure_name = 'M1poliroli, rolo polo',
+# mpolynomyal= '2x^3 +22 x^2 -2x +2', 
+# structure_name = 'M1poliroli, roolo poolo',
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
 # keywords = 'polinom, struktura, kemijski graf in še kaj',
 # comments = 'neki pa je ane',
@@ -103,8 +105,8 @@ class MpolynomDocument(Document):
 # M1poli.save()
 
 # p= Mpolynom(
-# mpolynomyal= '12x^2 + 45x^2 - 2x + 3', 
-# structure_name = 'poseben graf, rolo polo',
+# mpolynomyal= '2x + 3', 
+# structure_name = 'poosseben graf, rolo polo',
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
 # keywords = 'polinom, struktura',
 # comments = 'ni komentarjev',
@@ -115,8 +117,8 @@ class MpolynomDocument(Document):
 # p.save()
 
 # sss= Mpolynom(
-# mpolynomyal= '12 x^3', 
-# structure_name = 'ssturas',
+# mpolynomyal= ' 22 x^2', 
+# structure_name = 'sssttuuras',
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
 # keywords = 'polinom, struktura',
 # comments = 'ni komentarjev',

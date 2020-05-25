@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from search.documents import MpolynomDocument
+from elasticsearch_dsl.query import Q
+
 # from elasticsearch import Elasticsearch
 # from elasticsearch_dsl import Search, Q
 
@@ -24,13 +26,26 @@ def index(request): #search all fields
                 b = ""
                 for elt in wq:
                     if elt == "-" or elt == "+":
-                        b = b + " " + elt
+                        b = b + " " + elt + " "
                     elif elt == "x" or elt == "y":
                         b = b + " " + elt
+                    #elif elt == " ": naceloma to ni mozno ker smo nardil replace (wq)
+                    #    b = b
                     else:
                         b = b + elt
-                results =  MpolynomDocument.search().query("multi_match", query = b, fields = ['mpolynomyal^3',
-                'structure_name^3','keywords^2','comments','references','links','author^2'],fuzziness = 0)
+                if b[0] == " ":
+                    b = b[1:len(b)]
+                if b[len(b)-1] == " ":
+                    b == b[0:len(b) - 1]
+                split = b.split(" ")
+                nb_tokens = len(split)
+                range_results = MpolynomDocument.search().filter('range', nb_tokens ={'lte': nb_tokens+2, 'gte': nb_tokens-2})
+                match_results =  MpolynomDocument.search().query("multi_match", query = b, fields = ['mpolynomyal^3',
+                'structure_name^3','keywords^2','comments','references','links','author^2'],fuzziness = "AUTO")
+                results = search.query().query(
+                    Q('match', author = 'Mate Fik in P. Olde') & 
+                    Q( "match", structure_name = 'Mpolirolii')
+                )
                 response = results.execute()
                 number_results = response.hits.total.value
                 if number_results == 0:
