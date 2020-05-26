@@ -69,8 +69,8 @@ class MpolynomDocument(Document):
 #     django_file = base64.b64encode(picture.read())
 
 # poli = Mpolynom(
-# mpolynomyal= ' - x^2', 
-# structure_name = 'nnoovoov',
+# mpolynomyal= ' x^2', 
+# structure_name = 'nnnnnooooovvooivvvvvvvv',
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
 # keywords = 'polinom, rolinom',
 # comments = 'zeloo lep',
@@ -81,8 +81,8 @@ class MpolynomDocument(Document):
 # poli.save()
 
 # Mpoli = Mpolynom(
-# mpolynomyal= '12 x^3', 
-# structure_name = 'Mpolirolii',
+# mpolynomyal= '2x^2', 
+# structure_name = 'Mpppolirolii',
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
 # keywords = 'polinom, struktura, kemijski graf',
 # comments = 'neki pa je',
