@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from search.documents import MpolynomDocument
-from elasticsearch_dsl.query import Q
+from elasticsearch_dsl.query import Q, MultiMatch
 
 # from elasticsearch import Elasticsearch
 # from elasticsearch_dsl import Search, Q
@@ -39,13 +39,12 @@ def index(request): #search all fields
                     b == b[0:len(b) - 1]
                 split = b.split(" ")
                 nb_tokens = len(split)
-                range_results = MpolynomDocument.search().filter('range', nb_tokens ={'lte': nb_tokens+2, 'gte': nb_tokens-2})
-                match_results =  MpolynomDocument.search().query("multi_match", query = b, fields = ['mpolynomyal^3',
-                'structure_name^3','keywords^2','comments','references','links','author^2'],fuzziness = "AUTO")
-                results = search.query().query(
-                    Q('match', author = 'Mate Fik in P. Olde') & 
-                    Q( "match", structure_name = 'Mpolirolii')
-                )
+                # range_results = MpolynomDocument.search().filter('range', nb_tokens ={'lte': nb_tokens+2, 'gte': nb_tokens-2})
+                # match_results =  MpolynomDocument.search().query("multi_match", query = b, fields = ['mpolynomyal^3',
+                # 'structure_name^3','keywords^2','comments','references','links','author^2'],fuzziness = "AUTO")
+                q = Q('bool',
+                must=[Q("multi_match", query = b, fields = ['mpolynomyal^3','structure_name^3','keywords^2','comments','references','links','author^2'],fuzziness = "AUTO"), Q('range',  nb_tokens ={'lte': nb_tokens+2, 'gte': nb_tokens-2})]) 
+                results = MpolynomDocument.search().query(q) 
                 response = results.execute()
                 number_results = response.hits.total.value
                 if number_results == 0:
