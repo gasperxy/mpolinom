@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from search.documents import MpolynomDocument
 from elasticsearch_dsl.query import Q, MultiMatch
+from .models import rewrite_mpolynomial
 
 # from elasticsearch import Elasticsearch
 # from elasticsearch_dsl import Search, Q
@@ -22,22 +23,9 @@ def index(request): #search all fields
         for sign in sign_list:
             # contains mpoly sign
             if wq.find(sign) != -1:
-            # rewrite in same form as elasticsearch storage
-                b = ""
-                for elt in wq:
-                    if elt == "-" or elt == "+":
-                        b = b + " " + elt + " "
-                    elif elt == "x" or elt == "y":
-                        b = b + " " + elt
-                    #elif elt == " ": naceloma to ni mozno ker smo nardil replace (wq)
-                    #    b = b
-                    else:
-                        b = b + elt
-                if b[0] == " ":
-                    b = b[1:len(b)]
-                if b[len(b)-1] == " ":
-                    b == b[0:len(b) - 1]
-                split = b.split(" ")
+                # rewrite in same form as elasticsearch storage
+                b = rewrite_mpolynomial(wq)
+                split = b.split()
                 nb_tokens = len(split)
                 # range_results = MpolynomDocument.search().filter('range', nb_tokens ={'lte': nb_tokens+2, 'gte': nb_tokens-2})
                 # match_results =  MpolynomDocument.search().query("multi_match", query = b, fields = ['mpolynomyal^3',
@@ -63,7 +51,7 @@ def index(request): #search all fields
                 Q('range',  nb_tokens = {'lte': nb_tokens-1, 'gte': nb_tokens-2})
                 ])
 
-                #def query(lte, gte):
+                #def query(lte, gte): # lahko spreminjaš +2 -2 glede na dolžino besede - delež
                 # spremeni v funkcijo, da se ne ponavljaš
                 # q0 = Q('bool',
                 # must=[Q("multi_match", query = b, fields = ['mpolynomyal^3','structure_name^3','keywords^2',
@@ -86,16 +74,16 @@ def index(request): #search all fields
 
                 results2 = MpolynomDocument.search().query(q2) 
                 response2 = results2.execute()
-                number_results2 = response1.hits.total.value
+                number_results2 = response2.hits.total.value
                 if number_results2 > 10:
                     response2 = response2[0:10]
                 
                 results = []
                 for item in response0:
                     results.append(item)
-                for item in response1:
-                    results.append(item)
                 for item in response2:
+                    results.append(item)
+                for item in response1:
                     results.append(item)
                 number_results = number_results0 + number_results1 + number_results2
                 # if no results, search as usual

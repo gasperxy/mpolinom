@@ -1,6 +1,6 @@
 from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
-from .models import Mpolynom
+from .models import Mpolynom, rewrite_mpolynomial
 
 from django.core.files import File
 import datetime
@@ -17,22 +17,7 @@ class MpolynomDocument(Document):
     #     'token_count': fields.IntegerField(),
     # })
     def prepare_mpolynomyal(self, instance):
-        b = ""
-        for elt in instance:
-            if elt == "-" or elt == "+":
-                b = b + " " + elt + " "
-            elif elt == "x" or elt == "y":
-                b = b + " " + elt
-            elif elt == " ":
-                b = b
-            else:
-                b = b + elt
-        if b[0] == " ":
-            b = b[1:len(b)]
-        if b[len(b)-1] == " ":
-            b == b[0:len(b) - 1]
-    #nb_tokens = len(split)
-        return b#, nb_tokens
+        return rewrite_mpolynomial(instance)
         
     class Index:
         # Name of the Elasticsearch index
@@ -105,7 +90,7 @@ class MpolynomDocument(Document):
 # M1poli.save()
 
 # p= Mpolynom(
-# mpolynomyal= '2x + 3', 
+# mpolynomyal= '22p (m-  1 ) x^2 y^2 + 3', 
 # structure_name = 'poosseben graf, rolo polo',
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
 # keywords = 'polinom, struktura',
@@ -118,7 +103,259 @@ class MpolynomDocument(Document):
 
 # sss= Mpolynom(
 # mpolynomyal= ' 22 x^2', 
+# structure_name = 'sssttuujras',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tomo the boss'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= ' 2x^4 + 3x +5', 
+# structure_name = 'nji',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tomo the boss'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= ' 2x^4 + 3x +5', 
+# structure_name = 'sssttuurkjh',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tomo the boss'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= ' 22 x^2', 
+# structure_name = 'sssttuurahs',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tomo the boss'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= ' 22 x^2', 
+# structure_name = 'sssttuuhras',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tomo the boss'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= ' 22 x^2', 
+# structure_name = 'ssshttuuras',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tomo the boss'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= ' 5x^2 + 3', 
+# structure_name = 'sssttuuhghas',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tomo the boss'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= '5x^2 + 45x + 3', 
+# structure_name = 'ssstytthutuuras',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tomo the boss'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= ' 22 x^2', 
 # structure_name = 'sssttuuras',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tomo the boss'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= ' 12x^2 + 45x^2 - 2x + 3', 
+# structure_name = 'stetdtssttuuras',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tomo the boss'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= '  12 x^3', 
+# structure_name = 'ssoioiosttuhuras',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tomo the boss'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= ' 2x + 3', 
+# structure_name = 'sssttuoooouras',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tomo the boss'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= ' 5x^2 + 3', 
+# structure_name = 'ssisttuoooouras',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tomo the boss'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= ' 5x^2 + 45x + 3', 
+# structure_name = 'sssttuoopgggoouras',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tomo the boss'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= ' 12x^3', 
+# structure_name = 'sssttuooiioofdfuras',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tomo the boss'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= ' x^2 + 45x^2 - x + 3', 
+# structure_name = 'sssttuoooourasii',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tomo the boss'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= ' 512x^2 + 45x^2 - 2x + 3', 
+# structure_name = 'sssiooifrttuoooouras',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tomo the boss'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= ' x^2', 
+# structure_name = 'sssttuoooouras',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tomo the boss'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= ' 2x^3 +22 x^2 -2x +2', 
+# structure_name = 'sssttuoooknjimouras',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tomo the boss'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= '  22 x^2', 
+# structure_name = 'sssiiiiujuttuoooouras',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tomo the boss'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= '  - x^2', 
+# structure_name = 'sssttkkkkkkuoooouryuyas',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tomo the boss'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= ' 2x^2', 
+# structure_name = 'sssttkkkghjghjkkkuoooouras',
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
 # keywords = 'polinom, struktura',
 # comments = 'ni komentarjev',

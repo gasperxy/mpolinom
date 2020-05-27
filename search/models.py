@@ -2,6 +2,38 @@ import datetime
 from django.db import models
 from django.utils import timezone
 
+def rewrite_mpolynomial(mpolynomial):
+    sign_list = []
+    for i in range(2,10):
+        sign_list.append("^"+ str(i))
+    b = ""
+    for i in range(len(mpolynomial)):
+        if mpolynomial[i] == "-" or mpolynomial[i] == "+":
+            # if possible there is x^n or y^n before this sign (n number)
+            if i > 2:
+                # if sign is before ^n
+                if mpolynomial[i-2]+ mpolynomial[i-1] in sign_list:
+                    b = b + " " + mpolynomial[i] + " "
+                # sign is in m_ij
+                else:
+                    b= b + mpolynomial[i]
+            # sign is in m_ij
+            else:
+                b = b + mpolynomial[i]
+        elif mpolynomial[i] == "x" or mpolynomial[i] == "y":
+            b = b + " " + mpolynomial[i]
+        # elif wq[i] == " ":  # naceloma to ni mozno ker smo nardil replace (wq)
+        #     b = b
+        else:
+            b = b + mpolynomial[i]
+    if b[0] == " ":
+        b = b[1:len(b)]
+    if b[len(b)-1] == " ":
+        b == b[0:len(b) - 1]
+    return b
+
+
+
 
 # Create your models here. # preimenuj polynom
 class Mpolynom(models.Model):
@@ -17,21 +49,8 @@ class Mpolynom(models.Model):
    # class Foo(models.Model):
     nb_tokens = models.PositiveSmallIntegerField(default=0)
     def save(self, *args, **kwargs):
-        b = ""
-        for elt in self.mpolynomyal:
-            if elt == "-" or elt == "+":
-                b = b + " " + elt + " "
-            elif elt == "x" or elt == "y":
-                b = b + " " + elt
-            elif elt == " ":
-                b = b
-            else:
-                b = b + elt
-        if b[0] == " ":
-            b = b[1:len(b)]
-        if b[len(b)-1] == " ":
-            b == b[0:len(b) - 1]
-        split = b.split(" ")
+        b = rewrite_mpolynomial(self.mpolynomyal)
+        split = b.split()
         self.nb_tokens = len(split)
         super(Mpolynom, self).save(*args, **kwargs) # Call the "real" save() method.
     # omogoci iteracijo
