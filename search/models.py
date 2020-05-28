@@ -3,16 +3,18 @@ from django.db import models
 from django.utils import timezone
 
 def rewrite_mpolynomial(mpolynomial):
-    sign_list = []
-    for i in range(2,10):
-        sign_list.append("^"+ str(i))
+    mpolynomial = mpolynomial.replace(" ", "")
+    sign_list = ["x^", "y^"]
     b = ""
     for i in range(len(mpolynomial)):
         if mpolynomial[i] == "-" or mpolynomial[i] == "+":
             # if possible there is x^n or y^n before this sign (n number)
             if i > 2:
-                # if sign is before ^n
-                if mpolynomial[i-2]+ mpolynomial[i-1] in sign_list:
+                # if plus is two spaces after x^or y^ (case x^a+) 
+                if mpolynomial[i-3]+ mpolynomial[i-2] in sign_list:
+                    b = b + " " + mpolynomial[i] + " "
+                # or if plus is one space after ) (case x^(2n+3))
+                elif mpolynomial[i-1] == ")":
                     b = b + " " + mpolynomial[i] + " "
                 # sign is in m_ij
                 else:
@@ -53,6 +55,11 @@ class Mpolynom(models.Model):
         split = b.split()
         self.nb_tokens = len(split)
         super(Mpolynom, self).save(*args, **kwargs) # Call the "real" save() method.
+
+    def replace(self, *args, **kwargs): # a je to ok
+        return self.mpolynomyal.replace(*args, **kwargs)
+    def __len__(self):
+        return len(self.mpolynomyal)
     # omogoci iteracijo
     def __iter__(self):
        ''' Returns the Iterator object '''
@@ -60,6 +67,11 @@ class Mpolynom(models.Model):
     def __str__(self):
         return self.mpolynomyal #tukaj poves reprezentacijo objektov
         #dodamo metodo, ki deluje na teh objektih
+    def __getitem__(self, key):
+        return self.mpolynomyal[key]
+
+    def __setitem__(self, key, value):
+        return self.mpolynomyal[key] == value
     def published_recently(self): 
         """true if published in last seven days"""
         return self.publication_date >= timezone.now().date() - datetime.timedelta(days=7)

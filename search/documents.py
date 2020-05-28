@@ -102,7 +102,7 @@ class MpolynomDocument(Document):
 # p.save()
 
 # sss= Mpolynom(
-# mpolynomyal= ' 22 x^2', 
+# mpolynomyal= ' 2x^2y^2 +(2r−a−2b+2)x^2y^3 +(a+2b)x^2y^4+(3k−6r+1+a+3b)x^3 y^3 +(4r−a−4b−4)x^3 y^4 +bx^4 y^4 ', 
 # structure_name = 'sssttuujras',
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
 # keywords = 'polinom, struktura',
@@ -114,10 +114,10 @@ class MpolynomDocument(Document):
 # sss.save()
 
 # sss= Mpolynom(
-# mpolynomyal= ' 2x^4 + 3x +5', 
-# structure_name = 'nji',
+# mpolynomyal= ' (2p+6)x^2 y^2 +(8p+8q−4)x^2 y^3 +(15pq−10p+2q−1)x^3 y^3 ', 
+# structure_name = 'njkkli',
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
-# keywords = 'polinom, struktura',
+# keywords = 'polinkom, struktura',
 # comments = 'ni komentarjev',
 # references = 'poglej za ovinek',
 # links = 'link, link1',
@@ -126,7 +126,7 @@ class MpolynomDocument(Document):
 # sss.save()
 
 # sss= Mpolynom(
-# mpolynomyal= ' 2x^4 + 3x +5', 
+# mpolynomyal= ' (n−a)xy^2 +axy^n +(K+a−2n)x^2 y^2 +(n−a)x^2 y^n',
 # structure_name = 'sssttuurkjh',
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
 # keywords = 'polinom, struktura',
@@ -138,7 +138,7 @@ class MpolynomDocument(Document):
 # sss.save()
 
 # sss= Mpolynom(
-# mpolynomyal= ' 22 x^2', 
+# mpolynomyal= ' (mn−3n+2)x^2 y^2 +2nx^2 y^4 +(n−2)x^4 y^4 ', 
 # structure_name = 'sssttuurahs',
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
 # keywords = 'polinom, struktura',
@@ -150,7 +150,7 @@ class MpolynomDocument(Document):
 # sss.save()
 
 # sss= Mpolynom(
-# mpolynomyal= ' 22 x^2', 
+# mpolynomyal= '(m(n−1)(n−2)/2) x^(n−1)y^(n−1) +(n−1)m x^(n−1)y^(m+n−2) + m(m − 1)/2 x^(m+n−2) y^(m+n−2) +2xy, 
 # structure_name = 'sssttuuhras',
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
 # keywords = 'polinom, struktura',
@@ -162,7 +162,7 @@ class MpolynomDocument(Document):
 # sss.save()
 
 # sss= Mpolynom(
-# mpolynomyal= ' 22 x^2', 
+# mpolynomyal= '2x^2 y^2 +2nx^2 y^4 +(n−2)x^4y^4 ', 
 # structure_name = 'ssshttuuras',
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
 # keywords = 'polinom, struktura',
@@ -175,7 +175,7 @@ class MpolynomDocument(Document):
 
 # sss= Mpolynom(
 # mpolynomyal= ' 5x^2 + 3', 
-# structure_name = 'sssttuuhghas',
+# structure_name = 'sshhsttuuhghas',
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
 # keywords = 'polinom, struktura',
 # comments = 'ni komentarjev',
@@ -186,7 +186,7 @@ class MpolynomDocument(Document):
 # sss.save()
 
 # sss= Mpolynom(
-# mpolynomyal= '5x^2 + 45x + 3', 
+# mpolynomyal= '2(n+2)x^2 y^2 +4nx^2 y^3 +(4n−3)x^3 y ^3', 
 # structure_name = 'ssstytthutuuras',
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
 # keywords = 'polinom, struktura',
@@ -198,8 +198,8 @@ class MpolynomDocument(Document):
 # sss.save()
 
 # sss= Mpolynom(
-# mpolynomyal= ' 22 x^2', 
-# structure_name = 'sssttuuras',
+# mpolynomyal= '6x^2 y^2 +8(n−1)x^2 y^3 +(n(3n−4)+1)x^3 y^3 ', 
+# structure_name = 'ssggsshhhhktkkjjtufggfffgurasj',
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
 # keywords = 'polinom, struktura',
 # comments = 'ni komentarjev',

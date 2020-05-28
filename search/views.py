@@ -17,9 +17,9 @@ def index(request): #search all fields
     if q:
         # remove whitespace and check if mpolynom
         wq = q.replace(" ", "")
-        sign_list = []
-        for i in range(2,10):
-            sign_list.append("^"+ str(i))
+        sign_list = ["x^", "y^"]
+        # for i in range(2,10):
+        #     sign_list.append("^"+ str(i))
         for sign in sign_list:
             # contains mpoly sign
             if wq.find(sign) != -1:
