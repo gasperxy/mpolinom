@@ -28,25 +28,25 @@ def index(request): #search all fields
                 split = b.split()
                 nb_tokens = len(split)
                 # range_results = MpolynomDocument.search().filter('range', nb_tokens ={'lte': nb_tokens+2, 'gte': nb_tokens-2})
-                # match_results =  MpolynomDocument.search().query("multi_match", query = b, fields = ['mpolynomyal^3',
-                # 'structure_name^3','keywords^2','comments','references','links','author^2'],fuzziness = "AUTO")
+                match_results =  MpolynomDocument.search().query("multi_match", query = b, fields = ['mpolynomyal^3',
+                'structure_name^3','keywords^2','comments','references','links','author^2'],fuzziness = "AUTO")
 
                 # search for mpoly with the same length
                 q0 = Q('bool',
                 must=[Q("multi_match", query = b, fields = ['mpolynomyal^3','structure_name^3','keywords^2',
-                'comments','references','links','author^2'],fuzziness = "AUTO"  #, collapse = {"field" : "nb_tokens"} , sort = [{"nb_tokens" : {"order" : "asc", "mode" : "median"}}]
+                'comments','references','links','author^2'],fuzziness = "AUTO:4,7", minimum_should_match = '85%'  #, collapse = {"field" : "nb_tokens"} , sort = [{"nb_tokens" : {"order" : "asc", "mode" : "median"}}]
                 ),
                 Q('range',  nb_tokens = {'lte': nb_tokens, 'gte': nb_tokens})
                 ]) 
                 q1 = Q('bool',
                 must=[Q("multi_match", query = b, fields = ['mpolynomyal^3','structure_name^3','keywords^2',
-                'comments','references','links','author^2'],fuzziness = "AUTO"  #, collapse = {"field" : "nb_tokens"} , sort = [{"nb_tokens" : {"order" : "asc", "mode" : "median"}}]
+                'comments','references','links','author^2'],fuzziness = "AUTO:4,7", minimum_should_match = '85%'  #, collapse = {"field" : "nb_tokens"} , sort = [{"nb_tokens" : {"order" : "asc", "mode" : "median"}}]
                 ),
                 Q('range',  nb_tokens = {'lte': nb_tokens+2, 'gte': nb_tokens+1})
                 ])
                 q2 = Q('bool',
                 must=[Q("multi_match", query = b, fields = ['mpolynomyal^3','structure_name^3','keywords^2',
-                'comments','references','links','author^2'],fuzziness = "AUTO"  #, collapse = {"field" : "nb_tokens"} , sort = [{"nb_tokens" : {"order" : "asc", "mode" : "median"}}]
+                'comments','references','links','author^2'],fuzziness = "AUTO:4,7", minimum_should_match = '85%'  #, collapse = {"field" : "nb_tokens"} , sort = [{"nb_tokens" : {"order" : "asc", "mode" : "median"}}]
                 ),
                 Q('range',  nb_tokens = {'lte': nb_tokens-1, 'gte': nb_tokens-2})
                 ])
@@ -85,7 +85,9 @@ def index(request): #search all fields
                     results.append(item)
                 for item in response1:
                     results.append(item)
+                #results = match_results
                 number_results = number_results0 + number_results1 + number_results2
+                #results = str("search")
                 # if no results, search as usual
                 if number_results == 0:
                     #results = str("ni ni")

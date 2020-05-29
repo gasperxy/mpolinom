@@ -137,6 +137,9 @@ class MpolynomDocument(Document):
 # )
 # sss.save()
 
+
+
+
 # sss= Mpolynom(
 # mpolynomyal= ' (mn−3n+2)x^2 y^2 +2nx^2 y^4 +(n−2)x^4 y^4 ', 
 # structure_name = 'sssttuurahs',
@@ -187,7 +190,7 @@ class MpolynomDocument(Document):
 
 # sss= Mpolynom(
 # mpolynomyal= '2(n+2)x^2 y^2 +4nx^2 y^3 +(4n−3)x^3 y ^3', 
-# structure_name = 'ssstytthutuuras',
+# structure_name = 'ssstyttuhutuuras',
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
 # keywords = 'polinom, struktura',
 # comments = 'ni komentarjev',
@@ -210,8 +213,8 @@ class MpolynomDocument(Document):
 # sss.save()
 
 # sss= Mpolynom(
-# mpolynomyal= ' 12x^2 + 45x^2 - 2x + 3', 
-# structure_name = 'stetdtssttuuras',
+# mpolynomyal= ' (2p+6) x^2 y^3 + 4n x^2 y^3 + (4n−3) x^3 y^3', 
+# structure_name = 'sdtssttuuras',
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
 # keywords = 'polinom, struktura',
 # comments = 'ni komentarjev',
@@ -222,8 +225,8 @@ class MpolynomDocument(Document):
 # sss.save()
 
 # sss= Mpolynom(
-# mpolynomyal= '  12 x^3', 
-# structure_name = 'ssoioiosttuhuras',
+# mpolynomyal= '  2(n+2) x^4 y^4 + 4n x^2 y^3 + (4n−3) x^3 y^3 ', 
+# structure_name = 'ssoias',
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
 # keywords = 'polinom, struktura',
 # comments = 'ni komentarjev',
@@ -332,6 +335,7 @@ class MpolynomDocument(Document):
 # sss= Mpolynom(
 # mpolynomyal= '  22 x^2', 
 # structure_name = 'sssiiiiujuttuoooouras',
+
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
 # keywords = 'polinom, struktura',
 # comments = 'ni komentarjev',
@@ -340,7 +344,6 @@ class MpolynomDocument(Document):
 # author = 'Tomo the boss'
 # )
 # sss.save()
-
 # sss= Mpolynom(
 # mpolynomyal= '  - x^2', 
 # structure_name = 'sssttkkkkkkuoooouryuyas',
