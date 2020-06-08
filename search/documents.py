@@ -12,10 +12,7 @@ connections.create_connection(hosts=['localhost'], timeout=20)
 @registry.register_document
 class MpolynomDocument(Document):
     mpolynomyal = fields.TextField(analyzer='whitespace')
-    # mpolynommyal = fields.ObjectField(properties={
-    #     'mpolynomial': fields.TextField(),
-    #     'token_count': fields.IntegerField(),
-    # })
+
     def prepare_mpolynomyal(self, instance):
         return rewrite_mpolynomial(instance)
         
@@ -31,9 +28,7 @@ class MpolynomDocument(Document):
 
         # The fields of the model you want to be indexed in Elasticsearch
         fields = [
-            #'mpolynomyal',
             'structure_name',
-            #'structure_picture',
             'keywords',
             'comments',
             'references',

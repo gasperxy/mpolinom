@@ -1,11 +1,24 @@
-<form method="GET">
-    <input type="text" name="q" placeholder="your search ...">
-</form>>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>M-polynomials database</title>
+  </head>
+  <body>
+    <h1>The M-polynomials database</h1>
+    <p>Search through M-polynomials database</p>
+    <form method="GET">
+        <input type="text" name="q" style="height:20px;font-size:12pt;width:30em"
+        placeholder="type in M-polynomial, structure name, author, ...">
+    </form>>
+    
+    {% for item in results %}
+    {{item.id}}
+    {{item.mpolynomyal}}
+    {{item.structure_name}}
+    
+    <br>
+    {% endfor %}
+  </body>
+</html>
 
-{% for item in results %}
-{{item.id}}
-{{item.mpolynomyal}}
-{{item.structure_name}}
-
-<br>
-{% endfor %}
