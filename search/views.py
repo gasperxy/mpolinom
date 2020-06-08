@@ -3,8 +3,15 @@ from search.documents import MpolynomDocument
 from elasticsearch_dsl.query import Q, MultiMatch
 from .models import rewrite_mpolynomial
 
+from operator import itemgetter
+
 # from elasticsearch import Elasticsearch
 # from elasticsearch_dsl import Search, Q
+
+#printing for debug
+import logging
+logger = logging.getLogger("mylogger")
+logger.info("Whatever to log")
 
 
 
@@ -14,7 +21,7 @@ from django.http import HttpResponse
 def mpoly_query(query, lte, gte):
     q0 = Q('bool',
         must=[Q("multi_match", query = query, fields = ['mpolynomyal^4','structure_name^3','keywords^2',
-        'comments','references','links','author^2'],fuzziness = "0", minimum_should_match = '-10%'# 90, '85%' 
+        'comments','references','links','author^2'],fuzziness = 0, minimum_should_match = '-20%'# 90, '85%' 
         ),
         Q('range',  nb_tokens = {'lte': lte, 'gte': gte})
     ]) 
@@ -63,24 +70,35 @@ def index(request): #search all fields
                 number_results2 = response2.hits.total.value
                 if number_results2 > 10:
                     response2 = response2[0:10]
+
                 
-                results = []
+                
+                results_tuples = []
                 for item in response0:
-                    results.append(item)
+                    results_tuples.append((item, float(item.meta.score)))
                 for item in response2:
-                    results.append(item)
-                for item in response1:
-                    results.append(item)
+                    results_tuples.append((item, float(item.meta.score)))
+                for item in response1.hits:
+                    results_tuples.append((item, float(item.meta.score)))
+
                 #results = match_results
+                results_t = sorted(results_tuples,key=itemgetter(1))
+                results_t = results_t[::-1]
+                print(results_t)
+                results = [result[0] for result in results_t]
+                #results = results.reverse()
+
+
                 number_results = number_results0 + number_results1 + number_results2
                 #results = str("search")
                 # if no results, search as usual
                 if number_results == 0:
-                    #results = str("ni ni")
+                    print("ni rezultatov prvega tipa")
                     results =  MpolynomDocument.search().query("multi_match", query = q, fields = ['mpolynomyal^3',
                     'structure_name^3','keywords^2','comments','references','links','author^2'],fuzziness = "AUTO") 
                 break
         else:
+            print("besedni rezultat")
             results =  MpolynomDocument.search().query("multi_match", query = q, fields = ['mpolynomyal^3',
             'structure_name^3','keywords^2','comments','references','links','author^2'],fuzziness = "AUTO") 
     else:
