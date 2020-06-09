@@ -127,6 +127,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+import os
+ROOT_PATH = os.path.dirname(__file__)
+# only for debug mode
+STATICFILES_DIRS = [os.path.join(ROOT_PATH, 'static')]
 
 # for printing in debug mode
 
