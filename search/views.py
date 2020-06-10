@@ -102,7 +102,7 @@ def index(request): #search all fields
             results =  MpolynomDocument.search().query("multi_match", query = q, fields = ['mpolynomyal^3',
             'structure_name^3','keywords^2','comments','references','links','author^2'],fuzziness = "AUTO") 
     else:
-        results= "Ni podanega q"
+        results= "No q given."
     return render(request, 'search/index.html', {'results': results})
 # def about(request):
 #     return HttpResponse("This site is about M-polynomials page.")
