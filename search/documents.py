@@ -232,8 +232,8 @@ class MpolynomDocument(Document):
 # sss.save()
 
 # sss= Mpolynom(
-# mpolynomyal= ' 2x + 3', 
-# structure_name = 'sssttuoooouras',
+# mpolynomyal= ' 2x^2y^5 + 3xy^4', 
+# structure_name = 'ssooou',
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
 # keywords = 'polinom, struktura',
 # comments = 'ni komentarjev',

@@ -13,6 +13,23 @@ import logging
 logger = logging.getLogger("mylogger")
 logger.info("Whatever to log")
 
+from django.core.paginator import Paginator, Page, PageNotAnInteger, EmptyPage
+
+class DSEPaginator(Paginator):
+    """
+    Override Django's built-in Paginator class to take in a count/total number of items;
+    Elasticsearch provides the total as a part of the query results, so we can minimize hits.
+    """
+    def __init__(self, *args, **kwargs):
+        super(DSEPaginator, self).__init__(*args, **kwargs)
+        self._count = self.object_list.hits.total
+
+    def page(self, number):
+        # this is overridden to prevent any slicing of the object_list - Elasticsearch has
+        # returned the sliced data already.
+        number = self.validate_number(number)
+        return Page(self.object_list, number, self)
+
 
 
 # Create your views here.
@@ -42,6 +59,7 @@ def index(request): #search all fields
         for sign in sign_list:
             # contains mpoly sign
             if wq.find(sign) != -1:
+                print("rezultat prvega tipa")
                 # rewrite in same form as elasticsearch storage
                 b = rewrite_mpolynomial(wq)
                 split = b.split()
@@ -53,23 +71,26 @@ def index(request): #search all fields
 
                 # search for mpoly with the same length
                 response0 = mpoly_query(b, nb_tokens, nb_tokens)
+                print(response0)
 
                 # search for mpoly with 1 part (člen) more than original mpoly
                 response1 = mpoly_query(b, nb_tokens+4, nb_tokens+1)
                 # search for mpoly with 1 part less than original mpoly
                 response2 = mpoly_query(b, nb_tokens-1, nb_tokens-4)
 
+                # a res želiš omejit št rezultatov
+
                 number_results0 = response0.hits.total.value
-                if number_results0 > 10:
-                    response0 = response0[0:10]
+                # if number_results0 > 10:
+                #     response0 = response0[0:10]
 
                 number_results1 = response1.hits.total.value
-                if number_results1 > 10:
-                    response1 = response1[0:10]
+                # if number_results1 > 10:
+                #     response1 = response1[0:10]
 
                 number_results2 = response2.hits.total.value
-                if number_results2 > 10:
-                    response2 = response2[0:10]
+                # if number_results2 > 10:
+                #     response2 = response2[0:10]
 
                 
                 
@@ -86,24 +107,45 @@ def index(request): #search all fields
                 results_t = results_t[::-1]
                 print(results_t)
                 results = [result[0] for result in results_t]
-                #results = results.reverse()
+
 
 
                 number_results = number_results0 + number_results1 + number_results2
+                print("number results :" , number_results)
+                #paginator = Paginator(results, 10)
                 #results = str("search")
                 # if no results, search as usual
                 if number_results == 0:
                     print("ni rezultatov prvega tipa")
                     results =  MpolynomDocument.search().query("multi_match", query = q, fields = ['mpolynomyal^3',
                     'structure_name^3','keywords^2','comments','references','links','author^2'],fuzziness = "AUTO") 
+                    results = results.execute()
+                    #paginator = DSEPaginator(results, 10)
                 break
         else:
             print("besedni rezultat")
             results =  MpolynomDocument.search().query("multi_match", query = q, fields = ['mpolynomyal^3',
             'structure_name^3','keywords^2','comments','references','links','author^2'],fuzziness = "AUTO") 
+            results = results[0:100].execute()
+            number_resul = results.hits.total.value
+            print("number_results:", number_resul)
+            #paginator = DSEPaginator(results, 10)
     else:
+        print("no q given")
         results= "No q given."
-    return render(request, 'search/index.html', {'results': results})
+    print(results)
+    if results == "No q given.":
+        return render(request, 'search/index.html', {'results': results})
+    else:    
+        # page = request.GET.get('page', 1)
+
+        # try:
+        #     results = paginator.page(page)
+        # except PageNotAnInteger:
+        #     results = paginator.page(1)
+        # except EmptyPage:
+        #     results = paginator.page(paginator.num_pages)
+        return render(request, 'search/index.html', {'results': results})
 # def about(request):
 #     return HttpResponse("This site is about M-polynomials page.")
 # def instructions(request):

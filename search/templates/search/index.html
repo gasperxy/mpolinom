@@ -4,10 +4,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="author" content="Chris Mills">
-    <meta name="description" content="The MDN Web Docs Learning Area aims to provide
-    complete beginners to the Web with all they need to know to get
-    started with developing web sites and applications.">
+    <meta name="author" content="Sara Brezec">
+    <!-- to do: -->
+    <meta name="description" content=" "> 
     <title>M-polynomials database</title>
     <!-- nalozi raje datoteke -->
     <!-- <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous"> -->
@@ -90,7 +89,8 @@
                 
                 {% if results %}
                     {% if results == "No q given."%}
-                        <br>
+                        <h2 class="content-subhead">Results</h2>
+                        <p> No input given. </p> 
                     {% else %}
                         <h2 class="content-subhead">Results</h2>
                         <!-- <ul>
@@ -120,11 +120,39 @@
                             {% endfor %}   
                             </tbody>
                         </table>
+                    
+
+                        {% if results.has_other_pages %}
+                            <p>results has other pages</p>
+                            <ul class="pagination">
+                                {% if results.has_previous %}
+                                    <li><a href="?page={{ results.previous_page_number }}">&laquo;</a></li>
+                                {% else %}
+                                    <li class="disabled"><span>&laquo;</span></li>
+                                {% endif %}
+                                {% for i in results.paginator.page_range %}
+                                    {% if results.number == i %}
+                                        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                                    {% else %}
+                                        <li><a href="?page={{ i }}">{{ i }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if results.has_next %}
+                                    <li><a href="?page={{ results.next_page_number }}">&raquo;</a></li>
+                                {% else %}
+                                    <li class="disabled"><span>&raquo;</span></li>
+                                {% endif %}
+                            </ul>
+                        {% endif %}
+
+
+
                     {% endif %}
                 {% else %}
+                    <h2 class="content-subhead">Results</h2>
                     <p>No results are available.</p>
                 {% endif %}
-
+                
     
 
     
