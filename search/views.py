@@ -112,7 +112,7 @@ def index(request): #search all fields
 
                 number_results = number_results0 + number_results1 + number_results2
                 print("number results :" , number_results)
-                #paginator = Paginator(results, 10)
+                paginator = Paginator(results, 2)
                 #results = str("search")
                 # if no results, search as usual
                 if number_results == 0:
@@ -120,7 +120,7 @@ def index(request): #search all fields
                     results =  MpolynomDocument.search().query("multi_match", query = q, fields = ['mpolynomyal^3',
                     'structure_name^3','keywords^2','comments','references','links','author^2'],fuzziness = "AUTO") 
                     results = results.execute()
-                    #paginator = DSEPaginator(results, 10)
+                    paginator = Paginator(results, 5)
                 break
         else:
             print("besedni rezultat")
@@ -129,7 +129,7 @@ def index(request): #search all fields
             results = results[0:100].execute()
             number_resul = results.hits.total.value
             print("number_results:", number_resul)
-            #paginator = DSEPaginator(results, 10)
+            paginator = Paginator(results, 5)
     else:
         print("no q given")
         results= "No q given."
@@ -137,14 +137,14 @@ def index(request): #search all fields
     if results == "No q given.":
         return render(request, 'search/index.html', {'results': results})
     else:    
-        # page = request.GET.get('page', 1)
+        page = request.GET.get('page')
 
-        # try:
-        #     results = paginator.page(page)
-        # except PageNotAnInteger:
-        #     results = paginator.page(1)
-        # except EmptyPage:
-        #     results = paginator.page(paginator.num_pages)
+        try:
+            results = paginator.page(page)
+        except PageNotAnInteger:
+            results = paginator.page(1)
+        except EmptyPage:
+            results = paginator.page(paginator.num_pages)
         return render(request, 'search/index.html', {'results': results})
 # def about(request):
 #     return HttpResponse("This site is about M-polynomials page.")

@@ -121,12 +121,11 @@
                             </tbody>
                         </table>
                     
-
+                        {% load mytemplatetags %}
                         {% if results.has_other_pages %}
-                            <p>results has other pages</p>
                             <ul class="pagination">
                                 {% if results.has_previous %}
-                                    <li><a href="?page={{ results.previous_page_number }}">&laquo;</a></li>
+                                    <li><a href="?page={{ results.previous_page_number }}&q={{ request.GET.q }}">&laquo;</a></li>
                                 {% else %}
                                     <li class="disabled"><span>&laquo;</span></li>
                                 {% endif %}
@@ -138,12 +137,14 @@
                                     {% endif %}
                                 {% endfor %}
                                 {% if results.has_next %}
-                                    <li><a href="?page={{ results.next_page_number }}">&raquo;</a></li>
+                                    <li><a href="?page={{ results.next_page_number }}&q={{ request.GET.q }}">&raquo;</a></li>
                                 {% else %}
                                     <li class="disabled"><span>&raquo;</span></li>
                                 {% endif %}
                             </ul>
                         {% endif %}
+
+
 
 
 

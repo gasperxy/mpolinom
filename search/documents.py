@@ -362,3 +362,39 @@ class MpolynomDocument(Document):
 # author = 'Tomo the boss'
 # )
 # sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= ' (mn−3n+2) x^2 y^2 + 2n x^2 y^4 + (n−2) x^4 y', 
+# structure_name = 'ras',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'boss'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= '(mn−3n) x^2 y^2 + 2n x^2 y^4 + (n−2) x^4 y^4', 
+# structure_name = 'ssst',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Sara Kdo'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= ' (mn−3n+2) x^2 y^2 +  x^2 y^3 + (n−2) x^4 y^4', 
+# structure_name = 'sghjghras',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tretji'
+# )
+# sss.save()
