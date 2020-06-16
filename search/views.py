@@ -3,6 +3,9 @@ from search.documents import MpolynomDocument
 from elasticsearch_dsl.query import Q, MultiMatch
 from .models import rewrite_mpolynomial
 
+
+
+
 from operator import itemgetter
 
 # from elasticsearch import Elasticsearch
@@ -120,7 +123,7 @@ def index(request): #search all fields
                     results =  MpolynomDocument.search().query("multi_match", query = q, fields = ['mpolynomyal^3',
                     'structure_name^3','keywords^2','comments','references','links','author^2'],fuzziness = "AUTO") 
                     results = results.execute()
-                    paginator = Paginator(results, 5)
+                    paginator = Paginator(results, 2)
                 break
         else:
             print("besedni rezultat")
@@ -129,7 +132,7 @@ def index(request): #search all fields
             results = results[0:100].execute()
             number_resul = results.hits.total.value
             print("number_results:", number_resul)
-            paginator = Paginator(results, 5)
+            paginator = Paginator(results, 2)
     else:
         print("no q given")
         results= "No q given."
@@ -145,9 +148,12 @@ def index(request): #search all fields
             results = paginator.page(1)
         except EmptyPage:
             results = paginator.page(paginator.num_pages)
-        return render(request, 'search/index.html', {'results': results})
-# def about(request):
-#     return HttpResponse("This site is about M-polynomials page.")
+        return render(request,'search/index.html',
+                              {'results': results})
+        # return render(request, 'search/index.html', {'results': results})
+
+def detail(request, polynomial):
+    return HttpResponse("You're looking at detail site of M-polynom %s." % polynomial)
 # def instructions(request):
 #     return HttpResponse("Here are usage instructions and hints." )
 # def contribute(request):

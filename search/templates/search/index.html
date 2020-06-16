@@ -14,7 +14,11 @@
     <link rel="stylesheet" href="{% static 'search/pure-min.css' %}" >
     <!--<link rel="stylesheet" href="/layouts/side-menu/styles.css"> -->
     <link href="{% static 'search/style.css' %}" rel="stylesheet"> 
-  </head>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+          integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'search/pagination.css' %}">
+</head>
   <!-- <body>
     <header>
     <h1>The M-polynomials database</h1>
@@ -74,15 +78,42 @@
             </div>
     
             <div class="content">
+                <style scoped="">
+                    .button-xsmall {
+                        font-size: 70%;
+                    }
+            
+                    .button-small {
+                        font-size: 85%;
+                    }
+            
+                    .button-large {
+                        font-size: 110%;
+                    }
+            
+                    .button-xlarge {
+                        font-size: 125%;
+                    }
+                </style>
                 <h2 class="content-subhead">Search</h2>
                 <p>Search through M-polynomials database:</p>
-                <form method="GET">
-                    <input type="text" name="q" style="height:20px;font-size:12pt;width:30em"
+                <!-- <form method="GET"> -->
+                    <form method="GET" class="pure-form">
+             
+<!-- popravi height da se prilagaja ce treba -->
+                            <input type="text" name="q" style="height:30px;font-size:12pt;width:30em"
                     placeholder="type in M-polynomial, structure name, author, ...">
-                    <input type="submit" value="search">
-                </form>
+                    <button type="submit" class="button-small pure-button">search</button>
+           
+                    </form>
+                <!-- </form> -->
+                    <!-- <input type="text" name="q" style="height:23px;font-size:12pt;width:30em"
+                    placeholder="type in M-polynomial, structure name, author, ..."> -->
+                    <!-- <input type="submit" value="search"> -->
+     
                 <p>For more information about the search, see 
                     <a href="/layouts/side-menu/styles.css" alt="Instructions">Instructions. </a>
+                    
                 </p>
 
                 
@@ -113,8 +144,9 @@
                             <tbody>
                                 {% for item in results %}
                                 <tr>
-                                    <td>{{ forloop.counter }}</td>
-                                    <td>{{item.mpolynomyal}}</td>
+                                    <!-- item.id -->
+                                    <td>{{ forloop.counter0|add:results.start_index}}</td> 
+                                    <td><a href="/search/results/3/"> {{item.mpolynomyal}}</a></td>
                                     <td>{{item.structure_name}}</td>
                                 </tr>
                             {% endfor %}   
@@ -122,10 +154,10 @@
                         </table>
                     
                         {% load mytemplatetags %}
-                        {% if results.has_other_pages %}
+                        <!-- {% if results.has_other_pages %}
                             <ul class="pagination">
                                 {% if results.has_previous %}
-                                    <li><a href="?page={{ results.previous_page_number }}&q={{ request.GET.q }}">&laquo;</a></li>
+                                    <li><a href="?{% url_replace request 'page' results.previous_page_number %}">&laquo;</a></li>
                                 {% else %}
                                     <li class="disabled"><span>&laquo;</span></li>
                                 {% endif %}
@@ -133,16 +165,43 @@
                                     {% if results.number == i %}
                                         <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
                                     {% else %}
-                                        <li><a href="?page={{ i }}">{{ i }}</a></li>
+                                        <li><a href="?{% url_replace request 'page'  i  %}">{{ i }}</a></li> -->
+                                        <!-- <li><a href="?page={{ i }}&q={{ request.GET.q }}">{{ i }}</a></li>
                                     {% endif %}
                                 {% endfor %}
                                 {% if results.has_next %}
-                                    <li><a href="?page={{ results.next_page_number }}&q={{ request.GET.q }}">&raquo;</a></li>
+                                    <li><a href="?{% url_replace request 'page' results.next_page_number %}">&raquo;</a></li>
                                 {% else %}
                                     <li class="disabled"><span>&raquo;</span></li>
                                 {% endif %}
                             </ul>
-                        {% endif %}
+                        {% endif %} -->
+
+                        <div class="pagination">
+                            {% if results.has_previous %}
+                                <a class="pagination-action" href="?{% url_replace request 'page' 1 %}">
+                                    <i class="fa fa-angle-double-left" aria-hidden="true"></i>
+                                </a>
+                                <a class="pagination-action" href="?{% url_replace request 'page' results.previous_page_number %}">
+                                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                                </a>
+                            {% endif %}
+                            {% for num in results.paginator.page_range %}
+                                {% if results.number == num %}
+                                    <span class="pagination-number pagination-current">{{ num }}</span>
+                                {% elif num > results.number|add:'-3' and num < results.number|add:'3' %}
+                                    <a class="pagination-number" href="?{% url_replace request 'page'  num  %}">{{ num }}</a>
+                                {% endif %}
+                                {% endfor %}
+                            {% if results.has_next %}
+                                <a class="pagination-action" href="?{% url_replace request 'page' results.next_page_number %}">
+                                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                </a>
+                                <a class="pagination-action" href="?{% url_replace request 'page' results.paginator.num_pages %}">
+                                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                                </a>
+                            {% endif %}
+                        </div>
 
 
 

@@ -29,6 +29,7 @@ class MpolynomDocument(Document):
         # The fields of the model you want to be indexed in Elasticsearch
         fields = [
             'structure_name',
+            'Mid',
             'keywords',
             'comments',
             'references',

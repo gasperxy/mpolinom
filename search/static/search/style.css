@@ -69,7 +69,7 @@ The content `<div>` is where all your content goes.
 .content-subhead {
     margin: 50px 0 20px 0;
     font-weight: 300;
-    color: #888;
+    color: #888
 }
 
 
@@ -128,7 +128,7 @@ appears on the left side of the page.
     */
     #menu .pure-menu-selected,
     #menu .pure-menu-heading {
-        background: #1f8dd6;
+        background: #1f84d6;
     }
         /*
         This styles a link within a selected menu item `<li>`.

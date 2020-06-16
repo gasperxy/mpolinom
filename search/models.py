@@ -49,6 +49,7 @@ class Mpolynom(models.Model):
     author = models.CharField(max_length=100)
     publication_date = models.DateField(auto_now=True) #spremeni primere
    # class Foo(models.Model):
+    Mid = models.AutoField( primary_key=True)
     nb_tokens = models.PositiveSmallIntegerField(default=0)
     def save(self, *args, **kwargs):
         b = rewrite_mpolynomial(self.mpolynomyal)
