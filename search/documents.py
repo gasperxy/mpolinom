@@ -12,6 +12,7 @@ connections.create_connection(hosts=['localhost'], timeout=20)
 @registry.register_document
 class MpolynomDocument(Document):
     mpolynomyal = fields.TextField(analyzer='whitespace')
+    Mid = fields.KeywordField()
 
     def prepare_mpolynomyal(self, instance):
         return rewrite_mpolynomial(instance)
@@ -29,7 +30,7 @@ class MpolynomDocument(Document):
         # The fields of the model you want to be indexed in Elasticsearch
         fields = [
             'structure_name',
-            'Mid',
+           # 'Mid',
             'keywords',
             'comments',
             'references',
@@ -391,6 +392,42 @@ class MpolynomDocument(Document):
 # sss= Mpolynom(
 # mpolynomyal= ' (mn−3n+2) x^2 y^2 +  x^2 y^3 + (n−2) x^4 y^4', 
 # structure_name = 'sghjghras',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tretji'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= ' (mn) x^3 y^2 +  x^2 y^3 + (n−2) x^4 y^4', 
+# structure_name = 'sghgyas',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tretji'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= ' (mn+h) x^3 y^2 + 3 x^2 y^3 + (n−2) x^4 y^4', 
+# structure_name = 'kjhygyas',
+# #poli.structure_picture.save('poliomina.png', django_file, save=True)
+# keywords = 'polinom, struktura',
+# comments = 'ni komentarjev',
+# references = 'poglej za ovinek',
+# links = 'link, link1',
+# author = 'Tretji'
+# )
+# sss.save()
+
+# sss= Mpolynom(
+# mpolynomyal= '  3 x^2 y^3 + (n−2) x^4 y^4', 
+# structure_name = 'kjhygyasdjdjdjd',
 # #poli.structure_picture.save('poliomina.png', django_file, save=True)
 # keywords = 'polinom, struktura',
 # comments = 'ni komentarjev',

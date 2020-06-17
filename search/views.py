@@ -1,7 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from search.documents import MpolynomDocument
 from elasticsearch_dsl.query import Q, MultiMatch
-from .models import rewrite_mpolynomial
+from .models import rewrite_mpolynomial, Mpolynom
 
 
 
@@ -41,7 +41,7 @@ from django.http import HttpResponse
 def mpoly_query(query, lte, gte):
     q0 = Q('bool',
         must=[Q("multi_match", query = query, fields = ['mpolynomyal^4','structure_name^3','keywords^2',
-        'comments','references','links','author^2'],fuzziness = 0, minimum_should_match = '-20%'# 90, '85%' 
+        'comments','references','links','author^2', 'Mid'],fuzziness = 0, minimum_should_match = '-20%'# 90, '85%' 
         ),
         Q('range',  nb_tokens = {'lte': lte, 'gte': gte})
     ]) 
@@ -121,14 +121,14 @@ def index(request): #search all fields
                 if number_results == 0:
                     print("ni rezultatov prvega tipa")
                     results =  MpolynomDocument.search().query("multi_match", query = q, fields = ['mpolynomyal^3',
-                    'structure_name^3','keywords^2','comments','references','links','author^2'],fuzziness = "AUTO") 
+                    'structure_name^3','keywords^2','comments','references','links','author^2','Mid^2'],fuzziness = "AUTO") 
                     results = results.execute()
                     paginator = Paginator(results, 2)
                 break
         else:
             print("besedni rezultat")
             results =  MpolynomDocument.search().query("multi_match", query = q, fields = ['mpolynomyal^3',
-            'structure_name^3','keywords^2','comments','references','links','author^2'],fuzziness = "AUTO") 
+            'structure_name^3','keywords^2','comments','references','links','author^2','Mid^2'],fuzziness = "AUTO") 
             results = results[0:100].execute()
             number_resul = results.hits.total.value
             print("number_results:", number_resul)
@@ -152,8 +152,9 @@ def index(request): #search all fields
                               {'results': results})
         # return render(request, 'search/index.html', {'results': results})
 
-def detail(request, polynomial):
-    return HttpResponse("You're looking at detail site of M-polynom %s." % polynomial)
+def detail(request, Mid):
+    mpolynomial_object = get_object_or_404(Mpolynom, Mid=Mid)
+    return render(request, 'search/detail.html', {'Mobject': mpolynomial_object})
 # def instructions(request):
 #     return HttpResponse("Here are usage instructions and hints." )
 # def contribute(request):

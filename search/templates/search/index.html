@@ -59,7 +59,7 @@
     
                 <ul class="pure-menu-list">
                     <li class="pure-menu-item menu-item-divided pure-menu-selected">
-                        <a href="#" class="pure-menu-link">Search</a>
+                        <a href="/search/" class="pure-menu-link">Search</a>
                     </li>
 
                     <li class="pure-menu-item"><a href="#" class="pure-menu-link">Contribute</a></li>
@@ -146,7 +146,7 @@
                                 <tr>
                                     <!-- item.id -->
                                     <td>{{ forloop.counter0|add:results.start_index}}</td> 
-                                    <td><a href="/search/results/3/"> {{item.mpolynomyal}}</a></td>
+                                    <td><a href="/search/results/{{item.Mid}}/"> {{item.mpolynomyal}}</a></td>
                                     <td>{{item.structure_name}}</td>
                                 </tr>
                             {% endfor %}   

@@ -1,4 +1,5 @@
 import datetime
+from django.utils.crypto import get_random_string
 from django.db import models
 from django.utils import timezone
 
@@ -35,8 +36,15 @@ def rewrite_mpolynomial(mpolynomial):
     return b
 
 
-
-
+def unique_rand():
+    for _ in range(10):
+        string = get_random_string(8)
+        if not Mpolynom.objects.filter(Mid=string).exists():
+            break
+    else:
+        raise ValueError('Too many attempts to generate the Mid.')
+    return string
+    
 # Create your models here. # preimenuj polynom
 class Mpolynom(models.Model):
     mpolynomyal = models.CharField("M-polynomial", max_length=1000) ### popravi, zaradi presledkov ne dela
@@ -49,7 +57,7 @@ class Mpolynom(models.Model):
     author = models.CharField(max_length=100)
     publication_date = models.DateField(auto_now=True) #spremeni primere
    # class Foo(models.Model):
-    Mid = models.AutoField( primary_key=True)
+    Mid = models.CharField("id", max_length=10, default=unique_rand, editable=True)
     nb_tokens = models.PositiveSmallIntegerField(default=0)
     def save(self, *args, **kwargs):
         b = rewrite_mpolynomial(self.mpolynomyal)
