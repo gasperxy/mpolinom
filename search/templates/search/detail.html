@@ -59,9 +59,21 @@
                     <p ><b>M-polynomial</b><br>{{ Mobject.mpolynomyal }}</p>
                     <p ><b>structure name</b> <br>{{ Mobject.structure_name }}</p>
                     <p ><b>keywords</b> <br>{{ Mobject.keywords }}</p>
-                    <p ><b>    comments</b><br> {{ Mobject.comments }}</p>
-                    <p ><b>references</b><br> {{ Mobject.references}}</p>
-                    <p ><b>links</b> <br>{{ Mobject.links }}</p>
+                    <p ><b>    comments</b><br> 
+                        {% for item in Mobject.split_comments %}
+                            {{item}} <br>
+                        {% endfor %}
+                    </p>
+                    <p ><b>references</b><br> 
+                        {% for item in Mobject.split_references %}
+                            {{item}} <br>
+                        {% endfor %}
+                    </p>
+                    <p ><b>links</b> <br>
+                        {% for item in Mobject.split_links %}
+                            <a href="{{ item }}">{{ item }}</a> <br>
+                        {% endfor %}
+                    </p>
                     <p ><b>author</b> <br>{{ Mobject.author}}</p>
                     <p><b>id</b> <br>{{ Mobject.Mid }}</p>
                         

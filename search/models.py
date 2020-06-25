@@ -58,9 +58,10 @@ class Mpolynom(models.Model):
     publication_date = models.DateField(auto_now=True) #spremeni primere
    # class Foo(models.Model):
     Mid = models.CharField("id", max_length=10, default=unique_rand, editable=True)
-    nb_tokens = models.PositiveSmallIntegerField(default=0)
+    nb_tokens = models.PositiveSmallIntegerField(default=0, editable=False)
     def save(self, *args, **kwargs):
         b = rewrite_mpolynomial(self.mpolynomyal)
+        self.mpolynomyal = b
         split = b.split()
         self.nb_tokens = len(split)
         super(Mpolynom, self).save(*args, **kwargs) # Call the "real" save() method.
@@ -83,7 +84,17 @@ class Mpolynom(models.Model):
         return self.mpolynomyal[key] == value
     def published_recently(self): 
         """true if published in last seven days"""
-        return self.publication_date >= timezone.now().date() - datetime.timedelta(days=7)
+        now = timezone.now().date()
+        return now - datetime.timedelta(days=7) <= self.publication_date <= now
+    published_recently.admin_order_field = 'publication_date'
+    published_recently.boolean = True
+        #return self.publication_date >= timezone.now().date() - datetime.timedelta(days=7)
+    def split_links(self):
+        return self.links.split(",")
+    def split_comments(self):
+        return self.comments.split(",")
+    def split_references(self):
+        return self.references.split(",")
     # change name displayed on django admin site
     class Meta:
         verbose_name = "M-polynomial"

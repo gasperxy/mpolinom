@@ -149,7 +149,7 @@
                                     <td><a href="/search/results/{{item.Mid}}/"> {{item.mpolynomyal}}</a></td>
                                     <td>{{item.structure_name}}</td>
                                 </tr>
-                            {% endfor %}   
+                                {% endfor %}   
                             </tbody>
                         </table>
                     
@@ -192,7 +192,7 @@
                                 {% elif num > results.number|add:'-3' and num < results.number|add:'3' %}
                                     <a class="pagination-number" href="?{% url_replace request 'page'  num  %}">{{ num }}</a>
                                 {% endif %}
-                                {% endfor %}
+                            {% endfor %}
                             {% if results.has_next %}
                                 <a class="pagination-action" href="?{% url_replace request 'page' results.next_page_number %}">
                                     <i class="fa fa-angle-right" aria-hidden="true"></i>
