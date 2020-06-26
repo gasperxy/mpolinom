@@ -115,7 +115,7 @@ def index(request): #search all fields
 
                 number_results = number_results0 + number_results1 + number_results2
                 print("number results :" , number_results)
-                paginator = Paginator(results, 2)
+                paginator = Paginator(results, 10)
                 #results = str("search")
                 # if no results, search as usual
                 if number_results == 0:
@@ -123,7 +123,7 @@ def index(request): #search all fields
                     results =  MpolynomDocument.search().query("multi_match", query = q, fields = ['mpolynomyal^3',
                     'structure_name^3','keywords^2','comments','references','links','author^2','Mid^2'],fuzziness = "AUTO") 
                     results = results.execute()
-                    paginator = Paginator(results, 2)
+                    paginator = Paginator(results, 10)
                 break
         else:
             print("besedni rezultat")
@@ -132,7 +132,7 @@ def index(request): #search all fields
             results = results[0:100].execute()
             number_resul = results.hits.total.value
             print("number_results:", number_resul)
-            paginator = Paginator(results, 2)
+            paginator = Paginator(results, 10)
     else:
         print("no q given")
         results= "No q given."
@@ -155,11 +155,17 @@ def index(request): #search all fields
 def detail(request, Mid):
     mpolynomial_object = get_object_or_404(Mpolynom, Mid=Mid)
     return render(request, 'search/detail.html', {'Mobject': mpolynomial_object})
-# def instructions(request):
-#     return HttpResponse("Here are usage instructions and hints." )
-# def contribute(request):
-#     return HttpResponse("Contribute new M-polynomials or comment.")
-# def register(request):
-#     return HttpResponse("Registring allows you to contribute new M-polynomials and comment.")
-# def advanced_search(request):
-#     return HttpResponse("Advanced search.")
+
+from django.http import HttpResponse
+
+def contribute(request):
+    return render(request, 'search/contribute.html')
+
+def about(request):
+    return render(request, 'search/about.html')
+
+def access(request):
+    return render(request, 'search/access.html')
+
+def instructions(request):
+    return render(request, 'search/instructions.html')
