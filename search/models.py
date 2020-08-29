@@ -2,6 +2,7 @@ import datetime
 from django.utils.crypto import get_random_string
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 def rewrite_mpolynomial(mpolynomial):
     mpolynomial = mpolynomial.replace(" ", "")
@@ -54,8 +55,13 @@ class Mpolynom(models.Model):
     comments = models.TextField(blank=True)
     references = models.TextField(blank=True)
     links = models.TextField(blank=True)
-    author = models.CharField(max_length=100)
+    author = models.CharField(default = User, max_length=100, editable=False)
     publication_date = models.DateField(auto_now=True) #spremeni primere
+    status = models.CharField(max_length = 15, default = "waiting", choices=[
+        ("waiting","waiting"),
+        ("approved","approved"),
+        ("disapproved","disapproved"),
+    ])
    # class Foo(models.Model):
     Mid = models.CharField("id", max_length=10, default=unique_rand, editable=False)
     nb_tokens = models.PositiveSmallIntegerField(default=0, editable=False)

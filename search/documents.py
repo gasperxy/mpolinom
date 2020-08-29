@@ -13,6 +13,7 @@ connections.create_connection(hosts=['localhost'], timeout=20)
 class MpolynomDocument(Document):
     mpolynomyal = fields.TextField(analyzer='whitespace')
     Mid = fields.KeywordField()
+    status = fields.KeywordField()
 
     def prepare_mpolynomyal(self, instance):
         return rewrite_mpolynomial(instance)
@@ -37,7 +38,8 @@ class MpolynomDocument(Document):
             'links',
             'author',
             'publication_date',
-            'nb_tokens'
+            'nb_tokens',
+            
         ]
 
 # create an object
