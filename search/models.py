@@ -4,32 +4,160 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 
+# def rewrite_mpolynomial(mpolynomial):
+#     mpolynomial = mpolynomial.replace(" ", "")
+#     sign_list = ["x^", "y^"]
+#     b = ""
+#     for i in range(len(mpolynomial)):
+#         if mpolynomial[i] == "-" or mpolynomial[i] == "+":
+#             # če je kak člen pred znakom
+#             # if possible there is x^n and y^n before this sign (n number >= 1)
+#             if i > 0:
+#                 if i > 1:
+#                     # if plus is two spaces after x^ or y^ (case x^a+) 
+#                     if mpolynomial[i-3]+ mpolynomial[i-2] in sign_list:
+#                         b = b + " " + mpolynomial[i] + " "
+#                     # or if plus is one space after ) (case x^(2n+3))
+#                     elif mpolynomial[i-1] == ")":
+#                         b = b + " " + mpolynomial[i] + " "
+#                     # sign is in m_ij
+#                     else:
+#                         b= b + mpolynomial[i]
+#                 # sign is in m_ij
+#                 else:
+#                     b = b + mpolynomial[i]
+#             else:
+#                 raise Exception("Check form of M-polynomial; - or + on second position")
+#         elif mpolynomial[i] == "x" or mpolynomial[i] == "y":
+#             b = b + " " + mpolynomial[i]
+#         # elif wq[i] == " ":  # naceloma to ni mozno ker smo nardil replace (wq)
+#         #     b = b
+#         else:
+#             b = b + mpolynomial[i]
+#     if b[0] == " ":
+#         b = b[1:len(b)]
+#     if b[len(b)-1] == " ":
+#         b == b[0:len(b) - 1]
+#     return b
+
+def do_parentheses_match(input_string):
+    s = []
+    balanced = True
+    index = 0
+    while index < len(input_string) and balanced:
+        token = input_string[index]
+        if token == "(":
+            s.append(token)
+        elif token == ")":
+            if len(s) == 0:
+                balanced = False
+            else:
+                s.pop()
+
+        index += 1
+
+    return balanced and len(s) == 0
+
+# Driver code
+string = "())(()"
+#print(do_parentheses_match(string))
+
+def find_outer_parentheses_clousure(mpolynomial, i, parenth_start):
+    # print("v funkciji")
+    # print("i", i)
+    # print("parenth_start", parenth_start )
+    # beremo dokler se zunanji odprti oklepaj ne zapre
+    reading = True
+    open_par = 1
+    counter = 1
+    while reading:
+        if mpolynomial[parenth_start + counter] == "(":
+            open_par = open_par + 1
+        if mpolynomial[parenth_start + counter] == ")":
+            open_par = open_par - 1
+        if open_par == 0:
+            reading = False
+            counter = counter
+        elif counter < 0:
+            raise Exception(
+                "Higher number of closed parenthesis than opened, shouldn be happening, check do_parentheses_match")
+        else:
+            counter = counter + 1
+
+    # zapišemo polinom do zunanjega zaprtega oklepaja
+    poli =  mpolynomial[i:parenth_start + counter + 1]
+   # print("poli", poli)
+    # nastavimo parametre, da nadaljujemo z branjem v glavni for zanki na koncu zunanjega zaprtega oklepaja (t.j., da ne beremo 2x)
+    u = i + 1
+    v = parenth_start + counter
+   # print("u", u)
+    #print("v", v)
+    return [poli, u, v]
+def read_number(mpolynomial, i):
+  #  print("read_number")
+    number = ""
+    while i < len(mpolynomial) and mpolynomial[i].isdigit():
+        number = number + mpolynomial[i]
+        i = i + 1
+    last_position = i - 1
+    # print(mpolynomial[i-1].isdigit())
+    # print("last",last_position)
+    # print("len", len(mpolynomial))
+    return [number, last_position]
+
+
 def rewrite_mpolynomial(mpolynomial):
     mpolynomial = mpolynomial.replace(" ", "")
-    sign_list = ["x^", "y^"]
+    print(mpolynomial)
     b = ""
+    u = -2
+    v = -1
     for i in range(len(mpolynomial)):
-        if mpolynomial[i] == "-" or mpolynomial[i] == "+":
-            # if possible there is x^n or y^n before this sign (n number)
-            if i > 2:
-                # if plus is two spaces after x^or y^ (case x^a+) 
-                if mpolynomial[i-3]+ mpolynomial[i-2] in sign_list:
-                    b = b + " " + mpolynomial[i] + " "
-                # or if plus is one space after ) (case x^(2n+3))
-                elif mpolynomial[i-1] == ")":
-                    b = b + " " + mpolynomial[i] + " "
-                # sign is in m_ij
+        if u <= i <= v:
+            continue
+        #print("mpoli", mpolynomial[i])
+        #print(i)
+
+        if mpolynomial[i] == "x" or mpolynomial[i] == "y":
+           # print("x ali y")
+            if mpolynomial[i+1] == "^":
+              #  print("stresica")
+                if mpolynomial[i+2] == "(":
+                    #  potenca z več členi npr. x^(3+4b)
+                    results = find_outer_parentheses_clousure(mpolynomial, i, i+2)
+                    poli = results[0]
+                    u = results[1]
+                    v = results[2]
+                    b = b + " " + poli + " "
+                elif mpolynomial[i+2].isdigit():
+                    #print(i+2)
+                    number = read_number(mpolynomial, i+2)[0]
+                    v = read_number(mpolynomial, i+2)[1]
+                    u = i + 1
+                    b = b + " " + mpolynomial[i:i+2] + number + " "
+
                 else:
-                    b= b + mpolynomial[i]
-            # sign is in m_ij
+                    #primer potence z enim členom npr. x^a
+                    # zapišemo x^a s presledkom prej in kasneje in
+                    # nastavimo parametre da ne beremo še enkrat členov "^" in "a"
+                    b = b + " " + mpolynomial[i:i+2+1] + " "
+                    u = i + 1
+                    v = i + 2
+
             else:
-                b = b + mpolynomial[i]
-        elif mpolynomial[i] == "x" or mpolynomial[i] == "y":
-            b = b + " " + mpolynomial[i]
-        # elif wq[i] == " ":  # naceloma to ni mozno ker smo nardil replace (wq)
-        #     b = b
+                # x ali y brez potence
+                b = b + " " + mpolynomial[i] + " "
+        elif mpolynomial[i] == "+" or mpolynomial[i] == "-":
+            b = b + " " + mpolynomial[i] + " "
+        elif mpolynomial[i] == "(":
+            results = find_outer_parentheses_clousure(mpolynomial, i, i)
+            poli = results[0]
+            u = results[1]
+            v = results[2]
+            b = b + poli
         else:
             b = b + mpolynomial[i]
+    b = b.replace("  ", " ")
     if b[0] == " ":
         b = b[1:len(b)]
     if b[len(b)-1] == " ":
@@ -66,11 +194,11 @@ class Mpolynom(models.Model):
     Mid = models.CharField("id", max_length=10, default=unique_rand, editable=False)
     nb_tokens = models.PositiveSmallIntegerField(default=0, editable=False)
     def save(self, *args, **kwargs):
-        b = rewrite_mpolynomial(self.mpolynomyal)
-        self.mpolynomyal = b
-        split = b.split()
-        self.nb_tokens = len(split)
-        super(Mpolynom, self).save(*args, **kwargs) # Call the "real" save() method.
+            b = rewrite_mpolynomial(self.mpolynomyal)
+            self.mpolynomyal = b
+            split = b.split()
+            self.nb_tokens = len(split)
+            super(Mpolynom, self).save(*args, **kwargs) # Call the "real" save() method.
 
     def replace(self, *args, **kwargs): # a je to ok
         return self.mpolynomyal.replace(*args, **kwargs)
@@ -85,9 +213,10 @@ class Mpolynom(models.Model):
         #dodamo metodo, ki deluje na teh objektih
     def __getitem__(self, key):
         return self.mpolynomyal[key]
-
     def __setitem__(self, key, value):
         return self.mpolynomyal[key] == value
+
+
     def published_recently(self): 
         """true if published in last seven days"""
         now = timezone.now().date()
