@@ -4,6 +4,24 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+# extending user model
+# class Profile(models.Model):
+#     user = models.OneToOneField(User, on_delete=models.CASCADE)
+#     # count number of waiting comments
+#     nb_comments = models.PositiveSmallIntegerField(default=0, editable=False)
+
+# @receiver(post_save, sender=User)
+# def create_user_profile(sender, instance, created, **kwargs):
+#     if created:
+#         Profile.objects.create(user=instance)
+
+# @receiver(post_save, sender=User)
+# def save_user_profile(sender, instance, **kwargs):
+#     instance.profile.save()
+
 # def rewrite_mpolynomial(mpolynomial):
 #     mpolynomial = mpolynomial.replace(" ", "")
 #     sign_list = ["x^", "y^"]
@@ -40,23 +58,7 @@ from django.contrib.auth.models import User
 #         b == b[0:len(b) - 1]
 #     return b
 
-def do_parentheses_match(input_string):
-    s = []
-    balanced = True
-    index = 0
-    while index < len(input_string) and balanced:
-        token = input_string[index]
-        if token == "(":
-            s.append(token)
-        elif token == ")":
-            if len(s) == 0:
-                balanced = False
-            else:
-                s.pop()
 
-        index += 1
-
-    return balanced and len(s) == 0
 
 # Driver code
 string = "())(()"
@@ -179,7 +181,7 @@ class Mpolynom(models.Model):
     mpolynomyal = models.CharField("M-polynomial", max_length=1000) ### popravi, zaradi presledkov ne dela
     structure_name = models.CharField(max_length=200, unique=True) # keywords - glede na to da unique?? dopuscamo vec ali ne
     #structure_picture = models.ImageField()
-    keywords = models.CharField(max_length=200) #
+    keywords = models.CharField(max_length=200, blank=True) #
     comments = models.TextField(blank=True)
     references = models.TextField(blank=True)
     links = models.TextField(blank=True)
@@ -189,6 +191,7 @@ class Mpolynom(models.Model):
         ("waiting","waiting"),
         ("approved","approved"),
         ("disapproved","disapproved"),
+        ("new_comments","new_comments"),
     ])
    # class Foo(models.Model):
     Mid = models.CharField("id", max_length=10, default=unique_rand, editable=False)

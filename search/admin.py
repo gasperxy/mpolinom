@@ -15,6 +15,9 @@ from django.utils.encoding import force_text
 
 # for nonfield errors to show correctly
 from django.forms.forms import NON_FIELD_ERRORS
+from django.db.models import Q
+
+
 
 
 
@@ -43,6 +46,120 @@ class MpolynomAdminForm(forms.ModelForm):
         if not val:
             raise ValidationError('Parentheses do not match. Please correct the M-polynomial.')
         return self.cleaned_data
+
+
+class CommentsAdminForm(forms.ModelForm):
+    class Meta:
+            model = Mpolynom
+            fields = ('keywords', 'comments', 'references','links')
+    def __init__(self, *args, **kwargs):
+        super(CommentsAdminForm, self).__init__(*args, **kwargs)
+        self.fields['keywords'].value = ''
+     
+
+
+    def clean(self):
+        input_string = self.cleaned_data.get('mpolynomyal')
+        s = []
+        balanced = True
+        index = 0
+        while index < len(input_string) and balanced:
+            token = input_string[index]
+            if token == "(":
+                s.append(token)
+            elif token == ")":
+                if len(s) == 0:
+                    balanced = False
+                else:
+                    s.pop()
+            index += 1
+        val = balanced and len(s) == 0
+        if not val:
+            raise ValidationError('Parentheses do not match. Please correct the M-polynomial.')
+        return self.cleaned_data
+class BasicAdmin(admin.ModelAdmin):
+    form = CommentsAdminForm
+    # def save_model(self, request, obj, form, change):
+
+    #     raise Exception('test exception')
+
+    def save_model(self, request, obj, form, change):
+        obj.status = "new_comments"
+        obj.save()
+
+
+           
+ 
+
+    #non-superuser users can see only their inputs
+
+    #     else:
+    #         # by_author = qs.filter(author=request.user)
+    #         # by_author_waiting = by_author.filter(status="waiting")
+    #         # nb_author_waiting = by_author_waiting.count()
+    #         # if nb_author_waiting > 10:
+
+    #         return qs.filter(author=request.user)
+
+    # if user has more than 100 unresolved(status waiting) objects cant add new
+    # def has_add_permission(self, request):
+    #     if request.user.is_superuser:
+    #         return True
+    #     else:
+    #         by_author = Mpolynom.objects.filter(author=request.user)
+    #         by_author_waiting = by_author.filter(status="waiting")
+    #         nb_author_waiting = by_author_waiting.count()
+    #         if nb_author_waiting > 100:
+    #             return False
+    #         else:
+    #             return True
+
+    def has_change_permission(self, request, obj=None):
+        if request.user.is_superuser:
+            return True
+        else: # to do
+            return True
+            # if nb_author_waiting > 100:
+            #     return False
+            # else:
+            #     return True
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        else:
+            can_change = qs.filter(Q(status="approved") | Q(status="new_comments"))
+            return can_change
+
+
+
+    # def changeform_view(self, request, *args, **kwargs):
+    #     try:
+    #         return super().changeform_view(request, *args, **kwargs)
+    #     except IOError as err:
+    #         self.message_user(request, str(err), level=messages.ERROR)
+    #         return HttpResponseRedirect(request.path)
+
+
+    # def get_readonly_fields(self, request, obj=None):
+    #     if not request.user.is_superuser:
+    #         if obj and obj.status == 'approved':
+    #             return self.readonly_fields + ('mpolynomyal', 'structure_name', 'Mid', 'author','published_recently', 'status', 'keywords', 'comments', 'references', 'links')
+    #         return self.readonly_fields + ('status',)
+    #     return self.readonly_fields
+
+    #kaj s tem
+    # # # # def changelist_view(self, request, extra_context=None):    
+    # # # #     if not request.user.is_superuser:
+    # # # #         self.list_display = ('mpolynomyal', 'structure_name', 'Mid', 'author','published_recently')
+    # # # #     else:
+    # # # #         self.list_display = ('mpolynomyal', 'structure_name', 'Mid', 'author','published_recently', 'status')
+    # # # #     return super(TestModelAdmin, self).changelist_view(request, extra_context)
+    list_display = ('mpolynomyal', 'structure_name', 'Mid', 'author','published_recently', 'status')
+    list_filter = ['publication_date']
+    search_fields = ['mpolynomyal', 'structure_name','author','Mid']
+
 
 class TestModelAdmin(admin.ModelAdmin):
     form = MpolynomAdminForm
@@ -164,11 +281,6 @@ class TestModelAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return qs
         else:
-            # by_author = qs.filter(author=request.user)
-            # by_author_waiting = by_author.filter(status="waiting")
-            # nb_author_waiting = by_author_waiting.count()
-            # if nb_author_waiting > 10:
-
             return qs.filter(author=request.user)
 
     # if user has more than 100 unresolved(status waiting) objects cant add new
@@ -213,4 +325,15 @@ class TestModelAdmin(admin.ModelAdmin):
 admin.site.register(Mpolynom, TestModelAdmin)
 
 
+class MyPost(Mpolynom):
+    class Meta:
+        proxy = True
+
+class MyPostAdmin(BasicAdmin):
+    list_display = ('mpolynomyal', 'structure_name', 'Mid', 'author','published_recently', 'status')
+
+
+
+
+admin.site.register(MyPost, MyPostAdmin)
 
