@@ -125,7 +125,7 @@ def rewrite_mpolynomial(mpolynomial):
             if mpolynomial[i+1] == "^":
               #  print("stresica")
                 if mpolynomial[i+2] == "(":
-                    #  potenca z več členi npr. x^(3+4b)
+                    #  potenca z več členi npr. x^(3+4b) #to naceloma ni mozno? (def mpolinom)
                     results = find_outer_parentheses_clousure(mpolynomial, i, i+2)
                     poli = results[0]
                     u = results[1]
@@ -139,7 +139,7 @@ def rewrite_mpolynomial(mpolynomial):
                     b = b + " " + mpolynomial[i:i+2] + number + " "
 
                 else:
-                    #primer potence z enim členom npr. x^a
+                    #primer potence z enim členom npr. x^a #to tudi ni mozno (def mpolinom)
                     # zapišemo x^a s presledkom prej in kasneje in
                     # nastavimo parametre da ne beremo še enkrat členov "^" in "a"
                     b = b + " " + mpolynomial[i:i+2+1] + " "
@@ -212,12 +212,15 @@ class Mpolynom(models.Model):
        ''' Returns the Iterator object '''
        return iter(self.mpolynomyal)
     def __str__(self):
+        #return '%s %s' % (self.mpolynomyal , self.keywords)
         return self.mpolynomyal #tukaj poves reprezentacijo objektov
         #dodamo metodo, ki deluje na teh objektih
     def __getitem__(self, key):
         return self.mpolynomyal[key]
     def __setitem__(self, key, value):
         return self.mpolynomyal[key] == value
+    
+
 
 
     def published_recently(self): 
