@@ -193,6 +193,10 @@ class Mpolynom(models.Model):
         ("disapproved","disapproved"),
         ("new_comments","new_comments"),
     ])
+    new_keywords = models.CharField(max_length=200, blank=True) #
+    new_comments = models.TextField(blank=True)
+    new_references = models.TextField(blank=True)
+    new_links = models.TextField(blank=True)
    # class Foo(models.Model):
     Mid = models.CharField("id", max_length=10, default=unique_rand, editable=False)
     nb_tokens = models.PositiveSmallIntegerField(default=0, editable=False)
