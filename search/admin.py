@@ -108,28 +108,31 @@ class MpolynomModelAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         results = Mpolynom.objects.filter(Mid = obj.Mid).values()
-        status = results[0].get("status")
-        if status == "new_comments" and obj.status == "approved":
-            kw = obj.new_keywords + " ," + obj.keywords
-            obj.keywords = kw.strip(" ,")
-            obj.new_keywords = ""
+        if results:
+            status = results[0].get("status")
+            if status == "new_comments" and obj.status == "approved":
+                kw = obj.new_keywords + " ," + obj.keywords
+                obj.keywords = kw.strip(" ,")
+                obj.new_keywords = ""
 
-            com = obj.new_comments + " ," + obj.comments
-            obj.comments = com.strip(" ,")
-            obj.new_comments = ""
+                com = obj.new_comments + " ," + obj.comments
+                obj.comments = com.strip(" ,")
+                obj.new_comments = ""
 
-            ref = obj.new_references + " ," + obj.references
-            obj.references = ref.strip(" ,")
-            obj.new_references = ""
+                ref = obj.new_references + " ," + obj.references
+                obj.references = ref.strip(" ,")
+                obj.new_references = ""
 
-            lin = obj.new_links + " ," + obj.links
-            obj.links = lin.strip(" ,")
-            obj.new_links = ""
-        if request.user.is_superuser:
-            if change == True:
+                lin = obj.new_links + " ," + obj.links
+                obj.links = lin.strip(" ,")
+                obj.new_links = ""
+        if change == True:
                 obj.author = obj.author
         else:
-            obj.author = request.user.username
+            if request.user.first_name and request.user.last_name:
+                obj.author = request.user.first_name + " " + request.user.last_name
+            else:
+                obj.author = request.user.username
         obj.save()
 
     # makes database and parentheses errors displayed on the admin page when adding M-polynomial
@@ -262,17 +265,23 @@ class MpolynomModelAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return qs
         else:
-            return qs.filter(author=request.user)
+            if request.user.first_name and request.user.last_name:
+                return qs.filter(author=request.user.first_name + " " + request.user.last_name)
+            else:
+                return qs.filter(author=request.user)
 
     # if user has more than 100 unresolved(status waiting) objects cant add new
     def has_add_permission(self, request):
         if request.user.is_superuser:
             return True
         else:
-            by_author = Mpolynom.objects.filter(author=request.user)
+            if request.user.first_name and request.user.last_name:
+                by_author = Mpolynom.objects.filter(author=request.user.first_name + " " + request.user.last_name)
+            else:
+                by_author = Mpolynom.objects.filter(author=request.user)
             by_author_waiting = by_author.filter(status="waiting")
             nb_author_waiting = by_author_waiting.count()
-            if nb_author_waiting > 100:
+            if nb_author_waiting > 50:
                 return False
             else:
                 return True
@@ -334,6 +343,7 @@ class CommentAdmin(admin.ModelAdmin):
         new_comments = results[0].get("new_comments")
         new_references = results[0].get("new_references")
         new_links = results[0].get("new_links")
+        new_comments_authors = results[0].get("new_comments_authors")
 
         kw = obj.new_keywords + ", " + new_keywords
         obj.new_keywords = kw.strip(" ,")
@@ -346,6 +356,17 @@ class CommentAdmin(admin.ModelAdmin):
 
         lin = obj.new_links + ", " + new_links
         obj.new_links = lin.strip(" ,")
+
+        if request.user.first_name and request.user.last_name:
+            nc_author = request.user.first_name + " " + request.user.last_name
+        else:
+            nc_author = request.user.username
+        if nc_author in new_comments_authors:
+            ca = new_comments_authors
+        else:
+            ca = nc_author + ", " + new_comments_authors
+        obj.new_comments_authors = ca.strip(" ,")
+
         obj.save()
 
 
@@ -381,12 +402,20 @@ class CommentAdmin(admin.ModelAdmin):
     def has_change_permission(self, request, obj=None):
         if request.user.is_superuser:
             return True
-        else: # to do
-            return True
-            # if nb_author_waiting > 100:
-            #     return False
-            # else:
-            #     return True
+        else:
+            if request.user.first_name and request.user.last_name:
+                new_comments = Mpolynom.objects.filter(new_comments_authors__contains=request.user.first_name + " " + request.user.last_name)
+            else:
+                new_comments = Mpolynom.objects.filter(new_comments_authors__contains=request.user)
+                print("new_comments")
+                print(new_comments)
+            nb_new_comments = new_comments.count()
+            print(nb_new_comments)
+            if nb_new_comments > 50:
+                print("false")
+                return False
+            else:
+                return True
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)

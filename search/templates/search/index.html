@@ -139,6 +139,7 @@
                                     <th>#</th>
                                     <th>M-polynomial</th>
                                     <th>Structure name</th>
+                                    <th>Id</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -148,6 +149,7 @@
                                     <td>{{ forloop.counter0|add:results.start_index}}</td> 
                                     <td><a href="/search/results/{{item.Mid}}/"> {{item.mpolynomyal}}</a></td>
                                     <td>{{item.structure_name}}</td>
+                                    <td>{{item.Mid}}</td>
                                 </tr>
                                 {% endfor %}   
                             </tbody>

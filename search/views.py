@@ -45,7 +45,7 @@ def mpoly_query(query, lte, gte):
         ),
         Q('range',  nb_tokens = {'lte': lte, 'gte': gte})
     ]) 
-    results0 = MpolynomDocument.search().query(q0) 
+    results0 = MpolynomDocument.search().query(q0).filter("terms", status=["approved", "new_comments"])
     response0 = results0.execute()
     return response0
 # "AUTO:4,7"
@@ -121,14 +121,14 @@ def index(request): #search all fields
                 if number_results == 0:
                     print("ni rezultatov prvega tipa")
                     results =  MpolynomDocument.search().query("multi_match", query = q, fields = ['mpolynomyal^3',
-                    'structure_name^3','keywords^2','comments','references','links','author^2','Mid^2'],fuzziness = "AUTO") 
+                    'structure_name^3','keywords^2','comments','references','links','author^2','Mid^2'],fuzziness = "AUTO").filter("terms", status=["approved", "new_comments"])
                     results = results.execute()
                     paginator = Paginator(results, 10)
                 break
         else:
             print("besedni rezultat")
             results =  MpolynomDocument.search().query("multi_match", query = q, fields = ['mpolynomyal^3',
-            'structure_name^3','keywords^2','comments','references','links','author^2','Mid^2'],fuzziness = "AUTO") 
+            'structure_name^3','keywords^2','comments','references','links','author^2','Mid^2'],fuzziness = "AUTO").filter("terms", status=["approved", "new_comments"])
             results = results[0:100].execute()
             number_resul = results.hits.total.value
             print("number_results:", number_resul)

@@ -175,6 +175,15 @@ def unique_rand():
     else:
         raise ValueError('Too many attempts to generate the Mid.')
     return string
+
+# @classmethod
+# def get_name(user):
+#     if user.first_name and user.last_name:
+#         return user.first_name + " " + user.last_name
+#     else:
+#         return user.username
+
+
     
 # Create your models here. # preimenuj polynom
 class Mpolynom(models.Model):
@@ -197,6 +206,7 @@ class Mpolynom(models.Model):
     new_comments = models.TextField(blank=True)
     new_references = models.TextField(blank=True)
     new_links = models.TextField(blank=True)
+    new_comments_authors = models.CharField(max_length=5000, blank=True)
    # class Foo(models.Model):
     Mid = models.CharField("id", max_length=10, default=unique_rand, editable=False)
     nb_tokens = models.PositiveSmallIntegerField(default=0, editable=False)
