@@ -57,74 +57,73 @@ def index(request): #search all fields
         # remove whitespace and check if mpolynom
         #     sign_list.append("^"+ str(i))
         wq = q.replace(" ", "")
-        sign_list = ["x^", "y^"]
-        # for i in range(2,10):
-        for sign in sign_list:
-            # contains mpoly sign
-            if wq.find(sign) != -1:
-                print("rezultat prvega tipa")
-                # rewrite in same form as elasticsearch storage
-                b = rewrite_mpolynomial(wq)
-                split = b.split()
-                nb_tokens = len(split)
+ 
+        # contains mpoly sign
+        if wq.find("x") != -1:
+            print("x je not")
+        if wq.find("x") != -1 and wq.find("y") != -1:
+            print("rezultat prvega tipa")
+            # rewrite in same form as elasticsearch storage
+            b = rewrite_mpolynomial(wq)
+            split = b.split()
+            nb_tokens = len(split)
 
-                # range_results = MpolynomDocument.search().filter('range', nb_tokens ={'lte': nb_tokens+2, 'gte': nb_tokens-2})
-                #match_results =  MpolynomDocument.search().query("multi_match", query = b, fields = ['mpolynomyal^3',
-                #'structure_name^3','keywords^2','comments','references','links','author^2'],fuzziness = "AUTO")
+            # range_results = MpolynomDocument.search().filter('range', nb_tokens ={'lte': nb_tokens+2, 'gte': nb_tokens-2})
+            #match_results =  MpolynomDocument.search().query("multi_match", query = b, fields = ['mpolynomyal^3',
+            #'structure_name^3','keywords^2','comments','references','links','author^2'],fuzziness = "AUTO")
 
-                # search for mpoly with the same length
-                response0 = mpoly_query(b, nb_tokens, nb_tokens)
-                print(response0)
+            # search for mpoly with the same length
+            response0 = mpoly_query(b, nb_tokens+8, nb_tokens-8)
+            print(response0)
 
-                # search for mpoly with 1 part (člen) more than original mpoly
-                response1 = mpoly_query(b, nb_tokens+4, nb_tokens+1)
-                # search for mpoly with 1 part less than original mpoly
-                response2 = mpoly_query(b, nb_tokens-1, nb_tokens-4)
+            # # search for mpoly with 1 part (člen) more than original mpoly
+            # response1 = mpoly_query(b, nb_tokens+4, nb_tokens+1)
+            # # search for mpoly with 1 part less than original mpoly
+            # response2 = mpoly_query(b, nb_tokens-1, nb_tokens-4)
 
-                # a res želiš omejit št rezultatov
+            # a res želiš omejit št rezultatov
 
-                number_results0 = response0.hits.total.value
-                # if number_results0 > 10:
-                #     response0 = response0[0:10]
+            number_results0 = response0.hits.total.value
+            # if number_results0 > 10:
+            #     response0 = response0[0:10]
 
-                number_results1 = response1.hits.total.value
-                # if number_results1 > 10:
-                #     response1 = response1[0:10]
+            # number_results1 = response1.hits.total.value
+            # # if number_results1 > 10:
+            # #     response1 = response1[0:10]
 
-                number_results2 = response2.hits.total.value
-                # if number_results2 > 10:
-                #     response2 = response2[0:10]
+            # number_results2 = response2.hits.total.value
+            # # if number_results2 > 10:
+            # #     response2 = response2[0:10]
 
-                
-                
-                results_tuples = []
-                for item in response0:
-                    results_tuples.append((item, float(item.meta.score)))
-                for item in response2:
-                    results_tuples.append((item, float(item.meta.score)))
-                for item in response1.hits:
-                    results_tuples.append((item, float(item.meta.score)))
+            
+            
+            results_tuples = []
+            for item in response0:
+                results_tuples.append((item, float(item.meta.score)))
+            # for item in response2:
+            #     results_tuples.append((item, float(item.meta.score)))
+            # for item in response1.hits:
+            #     results_tuples.append((item, float(item.meta.score)))
 
-                #results = match_results
-                results_t = sorted(results_tuples,key=itemgetter(1))
-                results_t = results_t[::-1]
-                print(results_t)
-                results = [result[0] for result in results_t]
+            #results = match_results
+            results_t = sorted(results_tuples,key=itemgetter(1))
+            results_t = results_t[::-1]
+            print(results_t)
+            results = [result[0] for result in results_t]
 
 
 
-                number_results = number_results0 + number_results1 + number_results2
-                print("number results :" , number_results)
+            number_results = number_results0 #+ number_results1 + number_results2
+            print("number results :" , number_results)
+            paginator = Paginator(results, 10)
+            #results = str("search")
+            # if no results, search as usual
+            if number_results == 0:
+                print("ni rezultatov prvega tipa")
+                results =  MpolynomDocument.search().query("multi_match", query = q, fields = ['mpolynomyal^3',
+                'structure_name^3','keywords^2','comments','references','links','author^2','Mid^2'],fuzziness = "AUTO").filter("terms", status=["approved", "new_comments"])
+                results = results.execute()
                 paginator = Paginator(results, 10)
-                #results = str("search")
-                # if no results, search as usual
-                if number_results == 0:
-                    print("ni rezultatov prvega tipa")
-                    results =  MpolynomDocument.search().query("multi_match", query = q, fields = ['mpolynomyal^3',
-                    'structure_name^3','keywords^2','comments','references','links','author^2','Mid^2'],fuzziness = "AUTO").filter("terms", status=["approved", "new_comments"])
-                    results = results.execute()
-                    paginator = Paginator(results, 10)
-                break
         else:
             print("besedni rezultat")
             results =  MpolynomDocument.search().query("multi_match", query = q, fields = ['mpolynomyal^3',

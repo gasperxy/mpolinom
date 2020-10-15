@@ -42,6 +42,12 @@ class MpolynomAdminForm(forms.ModelForm):
         input_string = self.cleaned_data.get('mpolynomyal')
         if not input_string:
             raise ValidationError('')
+        if input_string[len(input_string)-1] == "^":
+            raise ValidationError('M-polynomial variable power missing')
+        if input_string[len(input_string)-1] == "+":
+            raise ValidationError('M-polynomial ends with + sign')
+        if input_string[len(input_string)-1] == "-":
+            raise ValidationError('M-polynomial ends with - sign')
         s = []
         balanced = True
         index = 0

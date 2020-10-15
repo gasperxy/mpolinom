@@ -114,6 +114,7 @@ def rewrite_mpolynomial(mpolynomial):
     b = ""
     u = -2
     v = -1
+    # polinom med u in v smo že napisali, zato ga ne beremo
     for i in range(len(mpolynomial)):
         if u <= i <= v:
             continue
@@ -122,33 +123,40 @@ def rewrite_mpolynomial(mpolynomial):
 
         if mpolynomial[i] == "x" or mpolynomial[i] == "y":
            # print("x ali y")
-            if mpolynomial[i+1] == "^":
-              #  print("stresica")
-                if mpolynomial[i+2] == "(":
-                    #  potenca z več členi npr. x^(3+4b) #to naceloma ni mozno? (def mpolinom)
-                    results = find_outer_parentheses_clousure(mpolynomial, i, i+2)
-                    poli = results[0]
-                    u = results[1]
-                    v = results[2]
-                    b = b + " " + poli + " "
-                elif mpolynomial[i+2].isdigit():
-                    #print(i+2)
-                    number = read_number(mpolynomial, i+2)[0]
-                    v = read_number(mpolynomial, i+2)[1]
-                    u = i + 1
-                    b = b + " " + mpolynomial[i:i+2] + number + " "
-
+            if i+1 < len(mpolynomial):
+                if mpolynomial[i+1] == "^":
+                #  print("stresica")
+                    if i+2 < len(mpolynomial):
+                        if mpolynomial[i+2] == "(":
+                            #  potenca z več členi npr. x^(3+4b) #to naceloma ni mozno? (def mpolinom)
+                            results = find_outer_parentheses_clousure(mpolynomial, i, i+2)
+                            poli = results[0]
+                            u = results[1]
+                            v = results[2]
+                            b = b + " " + poli + " "
+                        elif mpolynomial[i+2].isdigit():
+                            #print(i+2)
+                            number = read_number(mpolynomial, i+2)[0]
+                            v = read_number(mpolynomial, i+2)[1]
+                            u = i + 1
+                            b = b + " " + mpolynomial[i:i+2] + number + " "
+                        else:
+                            #primer potence z enim členom npr. x^a #to naj nebi bilo mozno (def mpolinom)
+                            # zapišemo x^a s presledkom prej in kasneje in
+                            # nastavimo parametre da ne beremo še enkrat členov "^" in "a"
+                            b = b + " " + mpolynomial[i:i+2+1] + " "
+                            u = i + 1
+                            v = i + 2
+                    else:
+                        # do tega naj nebi prislo - glej clean metodo v admin-pt
+                        raise Exception("M-polynomial variable power missing")
+                        
                 else:
-                    #primer potence z enim členom npr. x^a #to tudi ni mozno (def mpolinom)
-                    # zapišemo x^a s presledkom prej in kasneje in
-                    # nastavimo parametre da ne beremo še enkrat členov "^" in "a"
-                    b = b + " " + mpolynomial[i:i+2+1] + " "
-                    u = i + 1
-                    v = i + 2
-
+                    # x ali y brez potence
+                    b = b + " " + mpolynomial[i] + " "
             else:
-                # x ali y brez potence
-                b = b + " " + mpolynomial[i] + " "
+                    # x ali y brez potence
+                    b = b + " " + mpolynomial[i] + " "
         elif mpolynomial[i] == "+" or mpolynomial[i] == "-":
             b = b + " " + mpolynomial[i] + " "
         elif mpolynomial[i] == "(":
