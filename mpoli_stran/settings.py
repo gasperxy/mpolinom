@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'search.apps.SearchConfig', #search
     'django_elasticsearch_dsl',
-    'elasticsearch_dsl'
+    'elasticsearch_dsl',
+    'simple_history'
 ]
 
 ELASTICSEARCH_DSL = {
@@ -56,7 +57,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',
 ]
+
+SIMPLE_HISTORY_REVERT_DISABLED=True
 
 ROOT_URLCONF = 'mpoli_stran.urls'
 

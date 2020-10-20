@@ -17,6 +17,7 @@ from django.utils.encoding import force_text
 from django.forms.forms import NON_FIELD_ERRORS
 from django.db.models import Q
 from django import forms
+from simple_history.admin import SimpleHistoryAdmin
 
 
 
@@ -37,7 +38,7 @@ class MpolynomAdminForm(forms.ModelForm):
 
     class Meta:
             model = Mpolynom
-            fields = ('mpolynomyal', 'structure_name', 'keywords', 'new_keywords', 'comments', 'new_comments','references', 'new_references','links', 'new_links','status')
+            fields = ('mpolynomyal', 'structure_name', 'keywords', 'new_keywords', 'comments', 'new_comments','references', 'new_references','links', 'new_links','status', 'new_comments_authors')
     def clean(self):
         input_string = self.cleaned_data.get('mpolynomyal')
         if not input_string:
@@ -115,8 +116,7 @@ class MpolynomModelAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         results = Mpolynom.objects.filter(Mid = obj.Mid).values()
         if results:
-            status = results[0].get("status")
-            if status == "new_comments" and obj.status == "approved":
+            if obj.status == "approved":
                 kw = obj.new_keywords + " ," + obj.keywords
                 obj.keywords = kw.strip(" ,")
                 obj.new_keywords = ""
@@ -132,6 +132,9 @@ class MpolynomModelAdmin(admin.ModelAdmin):
                 lin = obj.new_links + " ," + obj.links
                 obj.links = lin.strip(" ,")
                 obj.new_links = ""
+
+                #preveri
+                obj.new_comments_authors = ""
         if change == True:
                 obj.author = obj.author
         else:
@@ -204,11 +207,12 @@ class MpolynomModelAdmin(admin.ModelAdmin):
             if not request.user.is_superuser:
                 if object_id:
                     obj = Mpolynom.objects.get(pk=object_id)
-                    if obj and obj.status == 'approved':
-                # here we simply hide the div that contains the save and delete buttons
-                        template_response.content = template_response.rendered_content.replace(
-                            '<div class="submit-row">',
-                            '<div class="submit-row" style="display: none">')
+                    if obj:
+                        if obj.status == 'new_comments' or obj.status == 'approved':
+                    # here we simply hide the div that contains the save and delete buttons
+                            template_response.content = template_response.rendered_content.replace(
+                                '<div class="submit-row">',
+                                '<div class="submit-row" style="display: none">')
             return template_response
         except (IntegrityError, DatabaseError) as e:
             if str(e) == 'UNIQUE constraint failed: search_mpolynom.structure_name':
@@ -298,10 +302,11 @@ class MpolynomModelAdmin(admin.ModelAdmin):
         if not request.user.is_superuser:
             if object_id:
                 obj = Mpolynom.objects.get(pk=object_id)
-                if obj and obj.status == 'approved':
-                    extra_context['show_save'] = False
-                    extra_context['show_save_and_continue'] = False
-                    extra_context['show_save_and_add_another'] = False
+                if obj:
+                    if obj.status == 'new_comments' or obj.status == 'approved':
+                        extra_context['show_save'] = False
+                        extra_context['show_save_and_continue'] = False
+                        extra_context['show_save_and_add_another'] = False
         try:
             return super().changeform_view(request, object_id, extra_context=extra_context)
         except IOError as err:
@@ -314,10 +319,11 @@ class MpolynomModelAdmin(admin.ModelAdmin):
 
     def get_readonly_fields(self, request, obj=None):
         if not request.user.is_superuser:
-            if obj and obj.status == 'approved':
-                return self.readonly_fields + ('mpolynomyal', 'structure_name', 'Mid', 'author','published_recently', 'status', 'keywords', 'comments', 'references', 'links', 'new_keywords', 'new_comments', 'new_references', 'new_links')
-            return self.readonly_fields + ('status','new_keywords', 'new_comments', 'new_references', 'new_links')
-        return self.readonly_fields
+            if obj:
+                if obj.status == "new_comments" or obj.status == 'approved':
+                    return self.readonly_fields + ('mpolynomyal', 'structure_name', 'Mid', 'author','published_recently', 'status', 'keywords', 'comments', 'references', 'links', 'new_keywords', 'new_comments', 'new_references', 'new_links', 'new_comments_authors')
+            return self.readonly_fields + ('status','new_keywords', 'new_comments', 'new_references', 'new_links', 'new_comments_authors')
+        return self.readonly_fields + ('new_comments_authors',)
 
     #kaj s tem
     # def changelist_view(self, request, extra_context=None):    
@@ -336,7 +342,7 @@ class Comment(Mpolynom):
     class Meta:
         proxy = True
 
-class CommentAdmin(admin.ModelAdmin):
+class CommentAdmin(SimpleHistoryAdmin):
     form = CommentAdminForm
     # def save_model(self, request, obj, form, change):
 
@@ -351,27 +357,33 @@ class CommentAdmin(admin.ModelAdmin):
         new_links = results[0].get("new_links")
         new_comments_authors = results[0].get("new_comments_authors")
 
-        kw = obj.new_keywords + ", " + new_keywords
-        obj.new_keywords = kw.strip(" ,")
+        # testiraj
+        if obj.new_keywords:
+            kw = obj.new_keywords + ", " + new_keywords
+            obj.new_keywords = kw.strip(" ,")
 
-        com = obj.new_comments + ", " + new_comments
-        obj.new_comments = com.strip(" ,")
+        if obj.new_comments:
+            com = obj.new_comments + ", " + new_comments
+            obj.new_comments = com.strip(" ,")
 
-        ref = obj.new_references + ", " + new_references
-        obj.new_references = ref.strip(" ,")
+        if obj.new_references:
+            ref = obj.new_references + ", " + new_references
+            obj.new_references = ref.strip(" ,")
 
-        lin = obj.new_links + ", " + new_links
-        obj.new_links = lin.strip(" ,")
+        if obj.new_links:
+            lin = obj.new_links + ", " + new_links
+            obj.new_links = lin.strip(" ,")
 
-        if request.user.first_name and request.user.last_name:
-            nc_author = request.user.first_name + " " + request.user.last_name
-        else:
-            nc_author = request.user.username
-        if nc_author in new_comments_authors:
-            ca = new_comments_authors
-        else:
-            ca = nc_author + ", " + new_comments_authors
-        obj.new_comments_authors = ca.strip(" ,")
+        if obj.new_keywords or obj.new_comments or obj.new_references or obj.new_links:
+            if request.user.first_name and request.user.last_name:
+                nc_author = request.user.first_name + " " + request.user.last_name
+            else:
+                nc_author = request.user.username
+            if nc_author in new_comments_authors:
+                ca = new_comments_authors
+            else:
+                ca = nc_author + ", " + new_comments_authors
+            obj.new_comments_authors = ca.strip(" ,")
 
         obj.save()
 
@@ -402,6 +414,9 @@ class CommentAdmin(admin.ModelAdmin):
     #         else:
     #             return True
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+
     def has_add_permission(self, request, obj=None):
         return False
 
@@ -425,11 +440,8 @@ class CommentAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        if request.user.is_superuser:
-            return qs
-        else:
-            can_change = qs.filter(Q(status="approved") | Q(status="new_comments"))
-            return can_change
+        can_change = qs.filter(Q(status="approved") | Q(status="new_comments"))
+        return can_change
 
 
 
@@ -457,6 +469,7 @@ class CommentAdmin(admin.ModelAdmin):
     # # # #     return super(MpolynomModelAdmin, self).changelist_view(request, extra_context)
     list_display = ('mpolynomyal', 'structure_name', 'Mid', 'author','published_recently', 'status')
     list_filter = ['publication_date']
+    history_list_display = ['Mid','new_keywords', 'new_comments','new_references','new_links']
     search_fields = ['mpolynomyal', 'structure_name','author','Mid']
 
 #class CommentsAdmin(BasicAdmin):

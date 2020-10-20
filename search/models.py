@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from simple_history.models import HistoricalRecords
 
 # extending user model
 # class Profile(models.Model):
@@ -195,6 +196,7 @@ def unique_rand():
     
 # Create your models here. # preimenuj polynom
 class Mpolynom(models.Model):
+    history = HistoricalRecords(inherit=True)
     mpolynomyal = models.CharField("M-polynomial", max_length=1000) ### popravi, zaradi presledkov ne dela
     structure_name = models.CharField(max_length=200, unique=True) # keywords - glede na to da unique?? dopuscamo vec ali ne
     #structure_picture = models.ImageField()

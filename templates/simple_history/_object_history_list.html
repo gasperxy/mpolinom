@@ -1,0 +1,39 @@
+{% load i18n %}
+{% load url from simple_history_compat %}
+{% load admin_urls %}
+{% load getattribute from getattributes %}
+
+<table id="change-history" class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th scope="col">{% trans 'Object' %}</th>
+      {% for column in history_list_display %}
+        <th scope="col">{% trans column %}</th>
+      {% endfor %}
+      <th scope="col">{% trans 'Date/time' %}</th>
+      <th scope="col">{% trans 'Action' %}</th>
+      <th scope="col">{% trans 'Changed by' %}</th>
+    
+    </tr>
+  </thead>
+  <tbody>
+    {% for action in action_list %}
+      <tr>
+        <td>{{ action.history_object }}</a></td>
+        {% for column in history_list_display %}
+        <td scope="col">{{ action|getattribute:column }}</th>
+        {% endfor %}
+        <td>{{ action.history_date }}</td>
+        <td>{{ action.get_history_type_display }}</td>
+        <td>
+          {% if action.history_user %}
+              {{ action.history_user }}
+          {% else %}
+            {% trans "None" %}
+          {% endif %}
+        </td>
+       
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>

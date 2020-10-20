@@ -2,21 +2,14 @@ from django.shortcuts import get_object_or_404, render
 from search.documents import MpolynomDocument
 from elasticsearch_dsl.query import Q, MultiMatch
 from .models import rewrite_mpolynomial, Mpolynom
-
-
+from django.http import HttpResponse
+from django.core.paginator import Paginator, Page, PageNotAnInteger, EmptyPage
 
 
 from operator import itemgetter
 
-# from elasticsearch import Elasticsearch
-# from elasticsearch_dsl import Search, Q
 
-#printing for debug
-import logging
-logger = logging.getLogger("mylogger")
-logger.info("Whatever to log")
 
-from django.core.paginator import Paginator, Page, PageNotAnInteger, EmptyPage
 
 class DSEPaginator(Paginator):
     """
@@ -36,12 +29,12 @@ class DSEPaginator(Paginator):
 
 
 # Create your views here.
-from django.http import HttpResponse
+
 
 def mpoly_query(query, lte, gte):
     q0 = Q('bool',
         must=[Q("multi_match", query = query, fields = ['mpolynomyal^4','structure_name^3','keywords^2',
-        'comments','references','links','author^2', 'Mid'],fuzziness = 0, minimum_should_match = '-20%'# 90, '85%' 
+        'comments','references','links','author^2', 'Mid'],fuzziness = 'AUTO', minimum_should_match = '-20%'# 90, '85%' 
         ),
         Q('range',  nb_tokens = {'lte': lte, 'gte': gte})
     ]) 
@@ -154,8 +147,6 @@ def index(request): #search all fields
 def detail(request, Mid):
     mpolynomial_object = get_object_or_404(Mpolynom, Mid=Mid)
     return render(request, 'search/detail.html', {'Mobject': mpolynomial_object})
-
-from django.http import HttpResponse
 
 def contribute(request):
     return render(request, 'search/contribute.html')
