@@ -34,14 +34,14 @@ class DSEPaginator(Paginator):
 def mpoly_query(query, lte, gte):
     q0 = Q('bool',
         must=[Q("multi_match", query = query, fields = ['mpolynomyal^4','structure_name^3','keywords^2',
-        'comments','references','links','author^2', 'Mid'],fuzziness = 'AUTO', minimum_should_match = '-20%'# 90, '85%' 
+        'comments','references','links','author^2', 'Mid'],fuzziness = "AUTO", minimum_should_match = '85%'# 90, '85%' 
         ),
         Q('range',  nb_tokens = {'lte': lte, 'gte': gte})
     ]) 
     results0 = MpolynomDocument.search().query(q0).filter("terms", status=["approved", "new_comments"])
     response0 = results0.execute()
     return response0
-# "AUTO:4,7"
+# "AUTO:0,6"
 
 
 def index(request): #search all fields
