@@ -49,15 +49,15 @@ def index(request): #search all fields
     if q:
         # remove whitespace and check if mpolynom
         #     sign_list.append("^"+ str(i))
-        wq = q.replace(" ", "")
  
         # contains mpoly sign
-        if wq.find("x") != -1:
-            print("x je not")
-        if wq.find("x") != -1 and wq.find("y") != -1:
+        # if wq.find("x") != -1:
+        #     print("x je not")
+        if q.find("x") != -1 and q.find("y") != -1 and q.find("^"): # tole ni ok kaj pa string onyx, sexy, xray, ..
             print("rezultat prvega tipa")
+
             # rewrite in same form as elasticsearch storage
-            b = rewrite_mpolynomial(wq)
+            b = rewrite_mpolynomial(q)
             split = b.split()
             nb_tokens = len(split)
 
@@ -111,6 +111,7 @@ def index(request): #search all fields
             paginator = Paginator(results, 10)
             #results = str("search")
             # if no results, search as usual
+             # s presledki ali brez???
             if number_results == 0:
                 print("ni rezultatov prvega tipa")
                 results =  MpolynomDocument.search().query("multi_match", query = q, fields = ['mpolynomyal^3',
