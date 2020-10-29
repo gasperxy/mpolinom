@@ -43,8 +43,8 @@ class MpolynomAdminForm(forms.ModelForm):
         input_string = self.cleaned_data.get('mpolynomyal')
         if not input_string:
             raise ValidationError('')
-        if input_string[len(input_string)-1] == "^":
-            raise ValidationError('M-polynomial variable power missing')
+        if input_string[len(input_string)-1] == "^" or input_string[0] == "^": # testiraj za prvi znak
+            raise ValidationError('M-polynomial variable or variable power missing')
         if input_string[len(input_string)-1] == "+":
             raise ValidationError('M-polynomial ends with + sign')
         if input_string[len(input_string)-1] == "-":
@@ -267,7 +267,7 @@ class MpolynomModelAdmin(admin.ModelAdmin):
             context.update(extra_context or {})
             return self.render_change_form(request, context, form_url=form_url, add=True)
            
- 
+ #obvezno spremeni disapproved to declined, rejected,..nin v latexu 
 
     #non-superuser users can see only their inputs
     def get_queryset(self, request):
@@ -337,7 +337,7 @@ class MpolynomModelAdmin(admin.ModelAdmin):
     search_fields = ['mpolynomyal', 'structure_name','author','Mid']
 admin.site.register(Mpolynom, MpolynomModelAdmin)
 
-
+# rabiš
 class Comment(Mpolynom):
     class Meta:
         proxy = True
@@ -373,7 +373,7 @@ class CommentAdmin(SimpleHistoryAdmin):
         if obj.new_links:
             lin = obj.new_links + ", " + new_links
             obj.new_links = lin.strip(" ,")
-
+        # popravi - username je unique ime in priimek pa ne
         if obj.new_keywords or obj.new_comments or obj.new_references or obj.new_links:
             if request.user.first_name and request.user.last_name:
                 nc_author = request.user.first_name + " " + request.user.last_name
@@ -424,6 +424,7 @@ class CommentAdmin(SimpleHistoryAdmin):
         if request.user.is_superuser:
             return True
         else:
+            # popravi na userja
             if request.user.first_name and request.user.last_name:
                 new_comments = Mpolynom.objects.filter(new_comments_authors__contains=request.user.first_name + " " + request.user.last_name)
             else:
@@ -470,7 +471,7 @@ class CommentAdmin(SimpleHistoryAdmin):
     list_display = ('mpolynomyal', 'structure_name', 'Mid', 'author','published_recently', 'status')
     list_filter = ['publication_date']
     history_list_display = ['Mid','new_keywords', 'new_comments','new_references','new_links']
-    search_fields = ['mpolynomyal', 'structure_name','author','Mid']
+    search_fields = ['mpolynomyal', 'structure_name','author','Mid','status']
 
 #class CommentsAdmin(BasicAdmin):
   #  list_display = ('mpolynomyal', 'structure_name', 'Mid', 'author','published_recently', 'status')
