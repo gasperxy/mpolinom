@@ -156,7 +156,7 @@ def rewrite_mpolynomial(mpolynomial):
                     # x ali y brez potence
                     b = b + " " + mpolynomial[i] + " "
             else:
-                    # x ali y brez potence
+                    # x ali y brez potence - zadnji znak v polinomu
                     b = b + " " + mpolynomial[i] + " "
         elif mpolynomial[i] == "+" or mpolynomial[i] == "-":
             b = b + " " + mpolynomial[i] + " "

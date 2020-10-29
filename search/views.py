@@ -34,7 +34,7 @@ class DSEPaginator(Paginator):
 def mpoly_query(query, lte, gte):
     q0 = Q('bool',
         must=[Q("multi_match", query = query, fields = ['mpolynomyal^4','structure_name^3','keywords^2',
-        'comments','references','links','author^2', 'Mid'],fuzziness = "AUTO", minimum_should_match = '85%'# 90, '85%' 
+        'comments','references','links','author^2', 'Mid^2'],fuzziness = "AUTO", minimum_should_match = '85%'# 90, '85%' 
         ),
         Q('range',  nb_tokens = {'lte': lte, 'gte': gte})
     ]) 
