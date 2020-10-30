@@ -11,8 +11,6 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -60,7 +58,7 @@ MIDDLEWARE = [
     'simple_history.middleware.HistoryRequestMiddleware',
 ]
 
-SIMPLE_HISTORY_REVERT_DISABLED=True
+SIMPLE_HISTORY_REVERT_DISABLED = True
 
 ROOT_URLCONF = 'mpoli_stran.urls'
 
@@ -137,7 +135,6 @@ ROOT_PATH = os.path.dirname(__file__)
 STATICFILES_DIRS = [os.path.join(ROOT_PATH, 'static')]
 
 # for printing in debug mode
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

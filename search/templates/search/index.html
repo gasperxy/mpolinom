@@ -38,7 +38,7 @@
     
     {% for item in results %}
     {{item.id}}
-    {{item.mpolynomyal}}
+    {{item.mpolynomial}}
     {{item.structure_name}}
     
     <br>
@@ -66,7 +66,7 @@
                     <!-- <li class="pure-menu-item"><a href="/search/access/"  class="pure-menu-link">Get Access</a></li>    -->
 
                     <li class="pure-menu-item"><a href="/search/instructions/"  class="pure-menu-link">Instructions</a></li>
-                    <li class="pure-menu-item"><a href="/search/about/"  class="pure-menu-link">About</a></li>
+                    <!-- <li class="pure-menu-item"><a href="/search/about/"  class="pure-menu-link">About</a></li> -->
                 </ul>
             </div>
         </div>
@@ -128,7 +128,7 @@
                         {% for item in results %}
                         <li>
                             {{item.id}}
-                            {{item.mpolynomyal}}
+                            {{item.mpolynomial}}
                             {{item.structure_name}}
                         </li>
                         {% endfor %}
@@ -147,7 +147,7 @@
                                 <tr>
                                     <!-- item.id -->
                                     <td>{{ forloop.counter0|add:results.start_index}}</td> 
-                                    <td><a href="/search/results/{{item.Mid}}/"> {{item.mpolynomyal}}</a></td>
+                                    <td><a href="/search/results/{{item.Mid}}/"> {{item.mpolynomial}}</a></td>
                                     <td>{{item.structure_name}}</td>
                                     <td>{{item.Mid}}</td>
                                 </tr>
