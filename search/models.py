@@ -12,13 +12,18 @@ def find_outer_parentheses_clousure(mpolynomial, i, parenth_start):
     """Finds outer parentheses clousure.
         args: 
         str mpolynomial - string in which we are searching parenthesis closure
-        int i - position in mpolynomial, that will be first character in returned arg poli
-        int parenth_start - position in mpolynomial, where parentheses start, char is ( 
+        int i - position in mpolynomial, that will be first character in 
+            returned arg poli
+        int parenth_start - position in mpolynomial, where parentheses start,   
+            char is ( 
         return:
         list including args poli, u and v:
-            str poli - string created from mpolynomial starting on i-th position, ending on outher parentheses clousure position
-            int u - not for reading starting position (see rewrite_mpolynomial u and v)
-            int v - not for reading ending position (see rewrite_mpolynomial u and v)
+            str poli - string created from mpolynomial starting on i-th 
+                position, ending on outher parentheses clousure position
+            int u - not for reading starting position (see rewrite_mpolynomial 
+                u and v)
+            int v - not for reading ending position (see rewrite_mpolynomial u 
+                and v)
     """
     # read unitll you find first parentheses closure
     reading = True
@@ -34,12 +39,16 @@ def find_outer_parentheses_clousure(mpolynomial, i, parenth_start):
             counter = counter
         elif counter < 0:
             raise Exception(
-                "Higher number of closed parenthesis than opened, shouldn be happening, check do_parentheses_match")
+                """Higher number of closed parenthesis than opened, shouldn be 
+                happening, check do_parentheses_match"""
+            )
         else:
             counter = counter + 1
-    # write poly from i-th position (e.g. variable x) to outer parentheses clousure position
+    # write poly from i-th position (e.g. variable x) to outer parentheses 
+    # clousure position
     poli =  mpolynomial[i:parenth_start + counter + 1]
-    # set parameters to start reading again after outer parentheses clousure (we dont read twice)
+    # set parameters to start reading again after outer parentheses 
+    # clousure (we dont read twice)
     u = i + 1
     v = parenth_start + counter
     return [poli, u, v]
@@ -52,8 +61,10 @@ def read_number(mpolynomial, i):
         int i - starting number position in mpolynomial
         return:
         list including args number, last_position:
-            str number - string created from mpolynomial starting on i-th position, ending with last consecutive digit character
-            int last_position - position of last consecutive digit in mpolynomial
+            str number - string created from mpolynomial starting on i-th 
+                position, ending with last consecutive digit character
+            int last_position - position of last consecutive digit in 
+                mpolynomial
     """
     number = ""
     while i < len(mpolynomial) and mpolynomial[i].isdigit():
@@ -62,9 +73,107 @@ def read_number(mpolynomial, i):
     last_position = i - 1
     return [number, last_position]
 
-
 def rewrite_mpolynomial(mpolynomial):
-    """Rewrites mpolynomial in specific structure: spaces around "main" + and - signs, around vars and vars with power and around opened and closed outer parantheses (...)
+    """Rewrites mpolynomial in specific structure: spaces around "main" +
+        and - signs, around vars and vars with power and
+        around opened and closed outer parantheses (...)
+        args:
+        str mpolynomial - string which we are rewriting
+        return:
+        str b: rewrited mpolynomial
+    """
+    mpolynomial = mpolynomial.replace(" ", "")
+    b = ""
+    u = -2
+    v = -1
+    bind = False
+    # we already wrote poly between u and v, we do not read it again
+    for i in range(len(mpolynomial)):
+        if u <= i <= v:
+            continue
+        if mpolynomial[i] == "^":
+            # var with power
+            if i+1 < len(mpolynomial):
+                if mpolynomial[i+1] == "(":
+                    #  power with multiple signs, e.g. x^(3+4b)
+                    results = find_outer_parentheses_clousure(
+                        mpolynomial, i, i+1)
+                    poli = results[0]
+                    l = len(poli)
+                    # poli without parentheses
+                    if len(poli) > 3:
+                        poli = rewrite_mpolynomial(poli[2:l - 1])
+                        u = results[1]
+                        v = results[2]
+                    else:
+                        poli = ""
+                        u = i+1
+                        v = i+2
+                    b = b + "^( " + poli + " )"
+                elif mpolynomial[i+1].isdigit():
+                    # number with more than one digit
+                    number = read_number(mpolynomial, i+1)[0]
+                    v = read_number(mpolynomial, i+1)[1]
+                    u = i + 1
+                    b = b + mpolynomial[i] + number
+                else:
+                    # power with one non-digit sign e.g. x^a
+                    b = b + mpolynomial[i:i+1+1]
+                    u = i + 1
+                    v = i + 1
+            else:
+                # shouldnt be happening - see clean method in admin.py
+                raise Exception("M-polynomial variable power missing")
+
+        elif mpolynomial[i] == "(":
+            results = find_outer_parentheses_clousure(mpolynomial, i, i)
+            poli = results[0]
+            l = len(poli)
+            # poli without parentheses
+            if len(poli) > 3:
+                poli = rewrite_mpolynomial(poli[1:l-1])
+                u = results[1]
+                v = results[2]
+            else:
+                poli = ""
+                u = i + 1
+                v = i + 1
+            if bind:
+                b = b + "( " + poli + " )"
+                bind = False
+            else:
+                b = b + " ( " + poli + " )"
+        elif mpolynomial[i].isdigit():
+            number = read_number(mpolynomial, i)[0]
+            v = read_number(mpolynomial, i)[1]
+            u = i + 1
+            if bind:
+                b = b + number
+                bind = False
+            else:
+                b = b + " " + number
+        elif mpolynomial[i] == "!":
+            b = b + mpolynomial[i]
+        elif mpolynomial[i] == "/" or mpolynomial[i] == ":":
+            bind = True
+            b = b + mpolynomial[i]
+        else:
+            if bind:
+                b = b + mpolynomial[i]
+                bind = False
+            else:
+                b = b + " " + mpolynomial[i]
+    b = b.replace("  ", " ")
+    if b[0] == " ":
+        b = b[1:len(b)]
+    if b[len(b)-1] == " ":
+        b == b[0:len(b) - 1]
+    return b
+
+def rewrite_mpolynomial_see(mpolynomial):
+    """Rewrites mpolynomial in specific structure: spaces around 
+    "main" + and - signs, around vars and vars with power and around
+    opened and closed outer parantheses (...)
         args:
         str mpolynomial - string which we are rewriting
         return:
@@ -85,8 +194,9 @@ def rewrite_mpolynomial(mpolynomial):
                     # var with power
                     if i+2 < len(mpolynomial):
                         if mpolynomial[i+2] == "(":
-                            #  power with multiple signs, e.g. x^(3+4b) #shouldt be happening, see definition of mpolynomial
-                            results = find_outer_parentheses_clousure(mpolynomial, i, i+2)
+                            #  power with multiple signs, e.g. x^(3+4b), should not happen (see definition of mpolynomial)
+                            results = find_outer_parentheses_clousure(
+                                mpolynomial, i, i+2)
                             poli = results[0]
                             u = results[1]
                             v = results[2]
@@ -98,7 +208,7 @@ def rewrite_mpolynomial(mpolynomial):
                             u = i + 1
                             b = b + " " + mpolynomial[i:i+2] + number + " "
                         else:
-                            # power with one non-digit sign e.g. x^a #shouldt be happening, see definition of mpolynomial
+                            # power with one non-digit sign e.g. x^a, should not happen (see definition of mpolynomial)
                             # write x^a with spaces before and after
                             # set parameters u and v to not read "^" and "a" again
                             b = b + " " + mpolynomial[i:i+2+1] + " "
@@ -147,14 +257,16 @@ def unique_rand():
 
 class Mpolynom(models.Model):
     history = HistoricalRecords(inherit=True)
-    mpolynomial = models.CharField("M-polynomial", max_length=1000)
+    mpolynomial = models.CharField(max_length=1000, default = "test")
+    mpolynomial_see = models.CharField("M-polynomial", max_length=1000)
     structure_name = models.CharField(max_length=200, unique=True)
     keywords = models.CharField(max_length=200, blank=True) #
     comments = models.TextField(blank=True)
     references = models.TextField(blank=True)
     links = models.TextField(blank=True)
     author = models.CharField(default = User, max_length=100, editable=False)
-    author_username = models.CharField("Username", default = User, max_length=100, editable=False)
+    author_username = models.CharField("Username", default = User,
+        max_length=100, editable=False)
     publication_date = models.DateField(auto_now=True)
     status = models.CharField(max_length = 15, default = "waiting", choices=[
         ("waiting","waiting"),
@@ -167,36 +279,39 @@ class Mpolynom(models.Model):
     new_references = models.TextField(blank=True)
     new_links = models.TextField(blank=True)
     new_comments_authors = models.CharField(max_length=5000, blank=True)
-    Mid = models.CharField("id", max_length=10, default=unique_rand, editable=False)
+    Mid = models.CharField("id", max_length=10, default=unique_rand,
+        editable=False)
     nb_tokens = models.PositiveSmallIntegerField(default=0, editable=False)
 
     def save(self, *args, **kwargs):
-            b = rewrite_mpolynomial(self.mpolynomial)
+            b = rewrite_mpolynomial(self.mpolynomial_see)
+            bs = rewrite_mpolynomial_see(self.mpolynomial_see)
             self.mpolynomial = b
+            self.mpolynomial_see = bs
             split = b.split()
             self.nb_tokens = len(split)
             # Call the "real" save() method.
             super(Mpolynom, self).save(*args, **kwargs)
 
     def replace(self, *args, **kwargs): 
-        return self.mpolynomial.replace(*args, **kwargs)
+        return self.mpolynomial_see.replace(*args, **kwargs)
 
     def __len__(self):
-        return len(self.mpolynomial)
+        return len(self.mpolynomial_see)
 
     # define iteration
     def __iter__(self):
-       return iter(self.mpolynomial)
+       return iter(self.mpolynomial_see)
 
     # representation of mpoly objects
     def __str__(self):
-        return self.mpolynomial 
+        return self.mpolynomial_see 
 
     def __getitem__(self, key):
-        return self.mpolynomial[key]
+        return self.mpolynomial_see[key]
 
     def __setitem__(self, key, value):
-        return self.mpolynomial[key] == value
+        return self.mpolynomial_see[key] == value
     
     def published_recently(self): 
         """Returns true if published in last seven days

@@ -1,6 +1,6 @@
 from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
-from .models import Mpolynom, rewrite_mpolynomial
+from .models import Mpolynom, rewrite_mpolynomial_see
 
 from django.core.files import File
 import datetime
@@ -15,8 +15,8 @@ class MpolynomDocument(Document):
     Mid = fields.KeywordField()
     status = fields.KeywordField()
 
-    def prepare_mpolynomial(self, instance):
-        return rewrite_mpolynomial(instance)
+    def prepare_mpolynomial_see(self, instance):
+        return rewrite_mpolynomial_see(instance)
         
     class Index:
         # Name of the Elasticsearch index
@@ -44,4 +44,5 @@ class MpolynomDocument(Document):
             'new_references',
             'new_links',
             'new_comments_authors',
+            'mpolynomial_see',
         ]

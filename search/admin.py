@@ -19,15 +19,19 @@ from simple_history.admin import SimpleHistoryAdmin
 class MpolynomAdminForm(forms.ModelForm):
     class Meta:
             model = Mpolynom
-            fields = ('mpolynomial', 'structure_name', 'keywords', 'new_keywords', 'comments', 'new_comments','references', 'new_references','links', 'new_links','status', 'new_comments_authors')
+            fields = ('mpolynomial_see', 'structure_name', 'keywords', 
+                'new_keywords', 'comments', 'new_comments', 'references', 
+                'new_references','links', 'new_links','status', 
+                'new_comments_authors')
     
     def clean(self):
         # check inputed mpoly before saving
-        input_string = self.cleaned_data.get('mpolynomial')
+        input_string = self.cleaned_data.get('mpolynomial_see')
         if not input_string:
             raise ValidationError('')
         if input_string[len(input_string)-1] == "^" or input_string[0] == "^":
-            raise ValidationError('M-polynomial variable or variable power missing')
+            raise ValidationError('''M-polynomial variable or variable power 
+                missing''')
         if input_string[len(input_string)-1] == "+":
             raise ValidationError('M-polynomial ends with + sign')
         if input_string[len(input_string)-1] == "-":
@@ -47,14 +51,16 @@ class MpolynomAdminForm(forms.ModelForm):
             index += 1
         val = balanced and len(s) == 0
         if not val:
-            raise ValidationError('Parentheses do not match. Please correct the M-polynomial.')
+            raise ValidationError('''Parentheses do not match. Please correct 
+                the M-polynomial.''')
         return self.cleaned_data
 
 
 class CommentAdminForm(forms.ModelForm):
     class Meta:
             model = Mpolynom
-            fields = ('new_keywords', 'new_comments', 'new_references','new_links')
+            fields = ('new_keywords', 'new_comments', 'new_references',
+                'new_links')
 
     # change initial value
     def __init__(self, *args, **kwargs):
@@ -98,18 +104,23 @@ class MpolynomModelAdmin(admin.ModelAdmin):
         else:
             obj.author_username = request.user.username
             if request.user.first_name and request.user.last_name:
-                obj.author = request.user.first_name + " " + request.user.last_name
+                obj.author = (request.user.first_name + " " + 
+                request.user.last_name)
             else:
                 obj.author = request.user.username
         obj.save()
 
-    # makes database and parentheses errors displayed on admin page when adding M-polynomial
+    # makes database and parentheses errors displayed on admin page when 
+    # adding M-polynomial
     def add_view(self, request, form_url='', extra_context=None):
         try:
-            return super(MpolynomModelAdmin, self).add_view(request, form_url, extra_context)
+            return super(MpolynomModelAdmin, self).add_view(request, form_url, 
+                extra_context)
         except (IntegrityError, DatabaseError) as e:
-            if str(e) == 'UNIQUE constraint failed: search_mpolynom.structure_name':
-                e = 'Structure name already exists! Check if the M-polynomial already exists in the database.'
+            if (str(e) == 
+                'UNIQUE constraint failed: search_mpolynom.structure_name'):
+                e = '''Structure name already exists! Check if the M-polynomial
+                    already exists in the database.'''
             model = self.model
             opts = model._meta
             formsets = []
@@ -119,7 +130,8 @@ class MpolynomModelAdmin(admin.ModelAdmin):
             # make faked nonfield error
             form._errors[NON_FIELD_ERRORS] = form.error_class([e])
             # We may handle exception here (just to save indentation)
-            adminForm = helpers.AdminForm(form, list(self.get_fieldsets(request)),
+            adminForm = helpers.AdminForm(form, 
+                list(self.get_fieldsets(request)),
                 self.get_prepopulated_fields(request),
                 self.get_readonly_fields(request),
                 model_admin=self)
@@ -130,8 +142,9 @@ class MpolynomModelAdmin(admin.ModelAdmin):
                 fieldsets = list(inline.get_fieldsets(request))
                 readonly = list(inline.get_readonly_fields(request))
                 prepopulated = dict(inline.get_prepopulated_fields(request))
-                inline_admin_formset = helpers.InlineAdminFormSet(inline, formset,
-                    fieldsets, prepopulated, readonly, model_admin=self)
+                inline_admin_formset = helpers.InlineAdminFormSet(inline, 
+                    formset,fieldsets, prepopulated, readonly, 
+                    model_admin=self)
                 inline_admin_formsets.append(inline_admin_formset)
                 media = media + inline_admin_formset.media
             context = {
@@ -146,27 +159,36 @@ class MpolynomModelAdmin(admin.ModelAdmin):
                 
             }
             context.update(extra_context or {})
-            return self.render_change_form(request, context, form_url=form_url, add=True)
+            return self.render_change_form(request, context, form_url=form_url, 
+                add=True)
 
-    # makes database and parentheses errors displayed on admin page when changing M-polynomial
+    # makes database and parentheses errors displayed on admin page when 
+    # changing M-polynomial
     def change_view(self, request, object_id, form_url='', extra_context=None):
         try:
             # get the default template response
-            template_response = super(MpolynomModelAdmin, self).change_view(request, object_id, form_url, extra_context)
+            template_response = super(MpolynomModelAdmin, self).change_view(
+                request, object_id, form_url, extra_context)
             # hide buttons
             if not request.user.is_superuser:
                 if object_id:
                     obj = Mpolynom.objects.get(pk=object_id)
                     if obj:
-                        if obj.status == 'new_comments' or obj.status == 'approved':
-                            # hide the div that contains the save and delete buttons
-                            template_response.content = template_response.rendered_content.replace(
+                        if (obj.status == 'new_comments' or 
+                            obj.status == 'approved'):
+                            # hide the div that contains the save and 
+                            # delete buttons
+                            template_response.content = (
+                                template_response.rendered_content.replace(
                                 '<div class="submit-row">',
-                                '<div class="submit-row" style="display: none">')
+                                '<div class="submit-row" style="display: none">'
+                                ))
             return template_response
         except (IntegrityError, DatabaseError) as e:
-            if str(e) == 'UNIQUE constraint failed: search_mpolynom.structure_name':
-                e = 'Structure name already exists! Check if the M-polynomial already exists in the database.'
+            if (str(e) == 
+                'UNIQUE constraint failed: search_mpolynom.structure_name'):
+                e = '''Structure name already exists! Check if the M-polynomial 
+                    already exists in the database.'''
             model = self.model
             opts = model._meta
             formsets = []
@@ -176,7 +198,8 @@ class MpolynomModelAdmin(admin.ModelAdmin):
             # make faked nonfield error
             form._errors[NON_FIELD_ERRORS] = form.error_class([e])
             # We may handle exception here (just to save indentation)
-            adminForm = helpers.AdminForm(form, list(self.get_fieldsets(request)),
+            adminForm = helpers.AdminForm(form, list(
+                self.get_fieldsets(request)),
                 self.get_prepopulated_fields(request),
                 self.get_readonly_fields(request),
                 model_admin=self)
@@ -187,8 +210,9 @@ class MpolynomModelAdmin(admin.ModelAdmin):
                 fieldsets = list(inline.get_fieldsets(request))
                 readonly = list(inline.get_readonly_fields(request))
                 prepopulated = dict(inline.get_prepopulated_fields(request))
-                inline_admin_formset = helpers.InlineAdminFormSet(inline, formset,
-                    fieldsets, prepopulated, readonly, model_admin=self)
+                inline_admin_formset = helpers.InlineAdminFormSet(inline, 
+                    formset, fieldsets, prepopulated, readonly, 
+                    model_admin=self)
                 inline_admin_formsets.append(inline_admin_formset)
                 media = media + inline_admin_formset.media
             context = {
@@ -202,7 +226,8 @@ class MpolynomModelAdmin(admin.ModelAdmin):
                 'preserved_filters': self.get_preserved_filters(request),
             }
             context.update(extra_context or {})
-            return self.render_change_form(request, context, form_url=form_url, add=True)
+            return self.render_change_form(request, context, form_url=form_url, 
+                add=True)
            
     #non-superuser users can see only their inputs
     def get_queryset(self, request):
@@ -217,7 +242,8 @@ class MpolynomModelAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return True
         else:
-            by_author = Mpolynom.objects.filter(author_username=request.user.username)
+            by_author = Mpolynom.objects.filter(
+                author_username=request.user.username)
             by_author_waiting = by_author.filter(status="waiting")
             nb_author_waiting = by_author_waiting.count()
             if nb_author_waiting > 50:
@@ -225,8 +251,10 @@ class MpolynomModelAdmin(admin.ModelAdmin):
             else:
                 return True
 
-    # hide save buttons for objects with approval or new_comments status for non superusers
-    def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
+    # hide save buttons for objects with approval or new_comments status for 
+    # non superusers
+    def changeform_view(self, request, object_id=None, form_url='', 
+        extra_context=None):
         extra_context = extra_context or {}
         if not request.user.is_superuser:
             if object_id:
@@ -237,7 +265,8 @@ class MpolynomModelAdmin(admin.ModelAdmin):
                         extra_context['show_save_and_continue'] = False
                         extra_context['show_save_and_add_another'] = False
         try:
-            return super().changeform_view(request, object_id, extra_context=extra_context)
+            return super().changeform_view(request, object_id, 
+                extra_context=extra_context)
         except IOError as err:
             self.message_user(request, str(err), level=messages.ERROR)
             return HttpResponseRedirect(request.path)
@@ -246,19 +275,28 @@ class MpolynomModelAdmin(admin.ModelAdmin):
         if not request.user.is_superuser:
             if obj:
                 if obj.status == "new_comments" or obj.status == 'approved':
-                    return self.readonly_fields + ('mpolynomial', 'structure_name', 'Mid', 'author','published_recently', 'status', 'keywords', 'comments', 'references', 'links', 'new_keywords', 'new_comments', 'new_references', 'new_links', 'new_comments_authors')
-            return self.readonly_fields + ('status','new_keywords', 'new_comments', 'new_references', 'new_links', 'new_comments_authors')
+                    return self.readonly_fields + ('mpolynomial_see', 
+                        'structure_name', 'Mid', 'author','published_recently', 
+                        'status', 'keywords', 'comments', 'references', 
+                        'links', 'new_keywords', 'new_comments', 
+                        'new_references', 'new_links', 'new_comments_authors')
+            return self.readonly_fields + ('status','new_keywords', 
+                'new_comments', 'new_references', 'new_links', 
+                'new_comments_authors')
         return self.readonly_fields + ('new_comments_authors',)
 
-    list_display = ('mpolynomial', 'structure_name', 'Mid', 'author', 'author_username','published_recently', 'status',)
+    list_display = ('mpolynomial_see', 'structure_name', 'Mid', 'author', 
+        'author_username','published_recently', 'status',)
     list_filter = ['publication_date']
-    search_fields = ['mpolynomial', 'structure_name','author','author_username','Mid']
+    search_fields = ['mpolynomial_see', 'structure_name','author',
+        'author_username','Mid', 'status']
 
 admin.site.register(Mpolynom, MpolynomModelAdmin)
 
 
 class Comment(Mpolynom):
-    # class Mpolynom can be registered only once, create fake class Comment wich is basically Mpolynom class
+    # class Mpolynom can be registered only once, create fake class Comment 
+    # wich is basically Mpolynom class
     class Meta:
         proxy = True
 
@@ -291,7 +329,8 @@ class CommentAdmin(SimpleHistoryAdmin):
             lin = obj.new_links + ", " + new_links
             obj.new_links = lin.strip(" ,")
 
-        if obj.new_keywords or obj.new_comments or obj.new_references or obj.new_links:
+        if (obj.new_keywords or obj.new_comments or obj.new_references 
+            or obj.new_links):
             nc_author = request.user.username
             if nc_author in new_comments_authors:
                 ca = new_comments_authors
@@ -310,7 +349,8 @@ class CommentAdmin(SimpleHistoryAdmin):
         if request.user.is_superuser:
             return True
         else:
-            new_comments = Mpolynom.objects.filter(new_comments_authors__contains=request.user.username)
+            new_comments = Mpolynom.objects.filter(
+                new_comments_authors__contains=request.user.username)
             nb_new_comments = new_comments.count()
             if nb_new_comments > 50:
                 return False
@@ -322,10 +362,13 @@ class CommentAdmin(SimpleHistoryAdmin):
         can_change = qs.filter(Q(status="approved") | Q(status="new_comments"))
         return can_change
 
-    list_display = ('mpolynomial', 'structure_name', 'Mid', 'author', 'author_username','published_recently', 'status')
+    list_display = ('mpolynomial_see', 'structure_name', 'Mid', 'author', 
+        'author_username','published_recently', 'status')
     list_filter = ['publication_date']
-    search_fields = ['mpolynomial', 'structure_name','author', 'author_username','Mid','status']
-    history_list_display = ['Mid','new_keywords', 'new_comments','new_references','new_links']
+    search_fields = ['mpolynomial_see', 'structure_name','author', 
+        'author_username','Mid','status']
+    history_list_display = ['Mid','new_keywords', 'new_comments',
+        'new_references','new_links']
 
 admin.site.register(Comment, CommentAdmin)
 
