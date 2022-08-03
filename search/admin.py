@@ -8,8 +8,8 @@ from django.http import HttpResponseRedirect
 
 from django.contrib.admin import helpers
 from django.contrib.admin.options import csrf_protect_m, IS_POPUP_VAR
-from django.utils.translation import ugettext as _
-from django.utils.encoding import force_text
+from django.utils.translation import gettext_lazy as _
+from django.utils.encoding import force_str
 
 from django.forms.forms import NON_FIELD_ERRORS
 from django.db.models import Q
@@ -148,7 +148,7 @@ class MpolynomModelAdmin(admin.ModelAdmin):
                 inline_admin_formsets.append(inline_admin_formset)
                 media = media + inline_admin_formset.media
             context = {
-                'title': _('Add %s') % force_text(opts.verbose_name),
+                'title': _('Add %s') % force_str(opts.verbose_name),
                 'adminform': adminForm,
                 'is_popup': IS_POPUP_VAR in request,
                 'media': media,
@@ -216,7 +216,7 @@ class MpolynomModelAdmin(admin.ModelAdmin):
                 inline_admin_formsets.append(inline_admin_formset)
                 media = media + inline_admin_formset.media
             context = {
-                'title': _('Add %s') % force_text(opts.verbose_name),
+                'title': _('Add %s') % force_str(opts.verbose_name),
                 'adminform': adminForm,
                 'is_popup': IS_POPUP_VAR in request,
                 'media': media,
