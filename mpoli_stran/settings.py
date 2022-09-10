@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from urllib.parse import quote_plus as urlquote
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -41,9 +42,16 @@ INSTALLED_APPS = [
     'simple_history'
 ]
 
+elk_base_url = 'elasticsearch://{user_name}:{password}@{host_ip}:{host_port}'
+elastic_search_url = elk_base_url.format(user_name='elastic',
+                                         password=urlquote('BgRpnKu_sg+xPJJEthqV'),
+                                         # password may contain special characters
+                                         host_ip='http://localhost',
+                                         host_port=9200)
+
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': 'localhost:9200'
+        'hosts': 'http://localhost:9200'
     }
 }
 
